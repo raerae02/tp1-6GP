@@ -1,4 +1,6 @@
-
+import RPi.GPIO as GPIO
+import os 
+import cv2
 
 
 #la fonction pour jouer la musique 

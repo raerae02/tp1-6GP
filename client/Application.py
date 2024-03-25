@@ -9,11 +9,11 @@ class Application(tk.Tk):
         self.creer_widgets()
     
     def creer_widgets(self):
-        # Labele au début de l'écran
+        # Label au début de l'écran
         self.etiquette = tk.Label(self, text="Contrôleur des vidéos")
         self.etiquette.grid(row=0, column=0, columnspan=3, pady=(10, 20))  
 
-        # Lables
+        # Labels 
         self.text_1 = tk.Label(self, text="Vidéo en cours :")
         self.text_1.grid(row=1, column=0, sticky='w', padx=10)
 
@@ -23,15 +23,16 @@ class Application(tk.Tk):
         self.text_3 = tk.Label(self, text="Nombre total des vidéos jouées aujourd'hui :")
         self.text_3.grid(row=3, column=0, sticky='w', padx=10)
 
-        # buttons
+        # Boutons
         self.boutons_locatisation = tk.Button(self, text="Localisation / Arrêt")
-        self.boutons_locatisation.grid(row=4, column=0, columnspan=3, pady=(20, 5))
+        self.boutons_locatisation.grid(row=4, column=0, pady=(20, 5), padx=(20, 0))  
 
         self.boutons_suivant = tk.Button(self, text="Passer au vidéo suivant")
-        self.boutons_suivant.grid(row=5, column=0, columnspan=3, pady=5)  
+        self.boutons_suivant.grid(row=5, column=0, pady=5, padx=(40, 0))  
 
         self.boutons_arreter = tk.Button(self, text="Arrêter les vidéos")
-        self.boutons_arreter.grid(row=6, column=0, padx=(50, 2), pady=5)  
+        self.boutons_arreter.grid(row=6, column=0, padx=(60, 0), pady=5)  
 
         self.boutons_demarrer = tk.Button(self, text="Démarrer les vidéos")
-        self.boutons_demarrer.grid(row=6, column=2, padx=(2, 50), pady=5) 
+        self.boutons_demarrer.grid(row=6, column=0, padx=(140, 0), pady=5)  
+
