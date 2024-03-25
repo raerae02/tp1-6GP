@@ -35,27 +35,7 @@ class Application(tk.Tk):
             self.boutons_arreter.grid(row=6, column=0, pady=5, padx=10)
 
             self.boutons_demarrer = tk.Button(self, text="Démarrer les vidéos")
-            self.boutons_demarrer.grid(row=7, column=0, pady=5, padx=10)
+            self.boutons_demarrer.grid(row=6, column=1, pady=5, padx=10)
 
-
-            #boutons pour la locatisation et arreter
-            self.boutons_locatisation = tk.Button(self,text="Localisation/ Arret")
-            self.boutons_locatisation.place(relx= 0.1 , rely = 0.2, anchor = 'center')
-            # boutons_locatisation.pack()
-
-            #boutons pour jouer la prochaine video
-            self.boutons_suivant = tk.Button(self,text="Passer au video suivant")
-            self.boutons_suivant.place(relx= 0.1 , rely = 0.25, anchor = 'center')
-            # boutons_suivant.pack()
-
-             
-            #boutons pour arreter les videos
-            self.boutons_arreter = tk.Button(self,text="Arreter les videos")
-            self.boutons_arreter.place(relx= 0.065 , rely = 0.3, anchor = 'center')
-            # boutons_arreter.pack()
-
-            #boutons pour Demarrer les videos
-            self.boutons_demarrer = tk.Button(self,text="Demarrer les videos")
-            self.boutons_demarrer.place(relx= 0.15 , rely = 0.3, anchor = 'center')
                     
 
