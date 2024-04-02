@@ -8,6 +8,7 @@ class ControleurVideos(tk.Tk):
         self.title("Contrôleur de Vidéos")  
         self.geometry("400x300")  
         self.creer_widgets()
+        self.after(30000, self.demarrer_videos)
     
     def creer_widgets(self):
         # Label au début de l'écran
