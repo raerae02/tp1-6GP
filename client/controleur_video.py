@@ -1,7 +1,8 @@
 import tkinter as tk
+import os
+from affichage_date_heure import AffichageDateHeure
 
-
-class Application(tk.Tk):
+class ControleurVideos(tk.Tk):
     def __init__(self):
         super().__init__() 
         self.title("Contrôleur de Vidéos")  
@@ -31,8 +32,24 @@ class Application(tk.Tk):
         self.boutons_suivant.grid(row=5, column=0, pady=5, padx=(40, 0))  
 
         self.boutons_arreter = tk.Button(self, text="Arrêter les vidéos")
-        self.boutons_arreter.grid(row=6, column=0, padx=(60, 0), pady=5)  
+        self.boutons_arreter.grid(row=6, column=0, padx=(60, 10), pady=5)  
 
-        self.boutons_demarrer = tk.Button(self, text="Démarrer les vidéos")
-        self.boutons_demarrer.grid(row=6, column=0, padx=(140, 0), pady=5)  
+        self.boutons_demarrer = tk.Button(self, text="Démarrer les vidéos", command=self.demarrer_videos)
+        self.boutons_demarrer.grid(row=6, column=1, padx=(10, 60), pady=5)
 
+    def lister_videos(self, dossier):
+        extensions = ['.mp4', '.avi'] 
+        fichiers = [f for f in os.listdir(dossier) if os.path.isfile(os.path.join(dossier, f))]
+        return [f for f in fichiers if any(f.endswith(ext) for ext in extensions)]
+
+    def demarrer_videos(self):
+        videos = self.lister_videos('./client/videos')
+        if videos:
+            print("Lancer la lecture des vidéos ici.")
+        else:
+            self.afficher_ecran_date_heure()
+
+    def afficher_ecran_date_heure(self):
+        self.withdraw() 
+        fenetre_date_heure = AffichageDateHeure(self)
+        fenetre_date_heure.mainloop()

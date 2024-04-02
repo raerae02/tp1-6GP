@@ -1,5 +1,6 @@
-from Application import Application
+import os
+from controleur_video import ControleurVideos
 
 if __name__ == "__main__":
-    app = Application()
+    app = ControleurVideos()
     app.mainloop()
