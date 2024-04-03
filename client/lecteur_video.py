@@ -18,37 +18,38 @@ class LecteurVideo:
 
 
     def play_video(self):
-            if self.video_index < len(self.videos):
-                video = self.videos[self.video_index]
-                self.parent.afficher_nom_video(video['nom_video'])
-                video_path = "./client/videos/" + video['nom_video'] 
-                id_video = video['id_video']
-                
-                self.marquer_video_courante(id_video)
-                
-                cap = cv2.VideoCapture(video_path)
-                debut_lecture = time.time() 
+            while (self.video_index <= len(self.videos)) :
+                if self.video_index < len(self.videos):
+                    video = self.videos[self.video_index]
+                    self.parent.afficher_nom_video(video['nom_video'])
+                    video_path = "./client/videos/" + video['nom_video'] 
+                    id_video = video['id_video']
+                    
+                    self.marquer_video_courante(id_video)
+                    
+                    cap = cv2.VideoCapture(video_path)
+                    debut_lecture = time.time() 
 
-                while cap.isOpened():
-                    ret, frame = cap.read()
-                    if ret:
-                        cv2.imshow('Video', frame)
-                        if cv2.waitKey(25) & 0xFF == ord('q'): 
+                    while cap.isOpened():
+                        ret, frame = cap.read()
+                        if ret:
+                            cv2.imshow('Video', frame)
+                            if cv2.waitKey(25) & 0xFF == ord('q'): 
+                                break
+                        else:
                             break
-                    else:
-                        break
-
-                # Calculer la durée de la lecture
-                duree_lecture = time.time() - debut_lecture
-                cap.release()
-                cv2.destroyAllWindows()
-                
-                self.terminer_video_courante(id_video, duree_lecture)
-                
-                self.video_index += 1
-            else:
-                print("Fin des vidéos.")
-                self.parent.afficher_nom_video(" ")
-                self.window.destroy()
-                self.parent.videos_en_lecture = False 
+                    
+                    # Calculer la durée de la lecture
+                    duree_lecture = time.time() - debut_lecture
+                    cap.release()
+                    cv2.destroyAllWindows()
+                    
+                    self.terminer_video_courante(id_video, duree_lecture)
+                    
+                    self.video_index += 1
+                else:
+                    print("Fin des vidéos.")
+                    self.parent.afficher_nom_video(" ")
+                    self.window.destroy()
+                    self.parent.videos_en_lecture = False 
 

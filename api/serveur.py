@@ -9,7 +9,8 @@ def create_connection():
     try:
         print('Connecting to the MySQL database...')
         connection = mysql.connector.connect(
-            host='localhost',
+            host='localhost',  # Use the IP address of the Docker container
+            port='3306',
             user='root',
             password='password',
             database='videos_db'
