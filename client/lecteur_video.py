@@ -1,38 +1,54 @@
 import cv2
 import tkinter as tk
 from tkinter import Toplevel
+import requests
+import time
 
 class LecteurVideo:
     def __init__(self, parent, videos):
         self.parent = parent
         self.videos = videos
-        self.video_index = 0  # Commencer par la première vidéo
+        self.video_index = 0  
         self.window = Toplevel(self.parent)
         self.window.title("Lecteur de Vidéos")
         self.play_video()
+        
+    def marquer_video_courante(self, id_video):
+        requests.post('http://localhost:5000/video/current', json={"id_video": id_video})
+
+    def terminer_video_courante(self, id_video, temps_jouer):
+        requests.put('http://localhost:5000/video/current', json={"id_video": id_video, "temps_jouer": temps_jouer})
+
 
     def play_video(self):
-        if self.video_index < len(self.videos):
-            video_path = self.videos[self.video_index]
-            cap = cv2.VideoCapture(video_path)
+            if self.video_index < len(self.videos):
+                video = self.videos[self.video_index]
+                video_path = "./client/videos/" + video['nom_video'] 
+                id_video = video['id_video']
+                
+                self.marquer_video_courante(id_video)
+                
+                cap = cv2.VideoCapture(video_path)
+                debut_lecture = time.time() 
 
-            # Cette partie est simplifiée pour la démonstration.
-            # Vous devrez mettre en place une boucle de lecture appropriée
-            # et gérer l'affichage des frames dans la fenêtre Tkinter ou Toplevel.
-            while cap.isOpened():
-                ret, frame = cap.read()
-                if ret:
-                    # Afficher le frame (à intégrer dans Tkinter)
-                    cv2.imshow('Video', frame)
-                    cv2.waitKey(25)  # Attendre 25ms ou jusqu'à ce qu'une touche soit pressée
-                else:
-                    break
+                while cap.isOpened():
+                    ret, frame = cap.read()
+                    if ret:
+                        cv2.imshow('Video', frame)
+                        if cv2.waitKey(25) & 0xFF == ord('q'): 
+                            break
+                    else:
+                        break
 
-            cap.release()
-            cv2.destroyAllWindows()
-            self.video_index += 1  # Passer à la vidéo suivante
-        else:
-            print("Fin des vidéos.")
-            self.window.destroy()
+                # Calculer la durée de la lecture
+                duree_lecture = time.time() - debut_lecture
+                cap.release()
+                cv2.destroyAllWindows()
+                
+                self.terminer_video_courante(id_video, duree_lecture)
+                
+                self.video_index += 1
+            else:
+                print("Fin des vidéos.")
+                self.window.destroy()
 
-    # Ajoutez d'autres méthodes au besoin pour contrôler la lecture (pause, suivant, précédent, etc.)

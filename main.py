@@ -1,6 +1,6 @@
 import threading
 from client.controleur_video import ControleurVideos
-from api.main import app
+from api.serveur import app
 
 
 def run_api():
