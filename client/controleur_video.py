@@ -1,5 +1,6 @@
 import tkinter as tk
 import os
+import cv2
 from affichage_date_heure import AffichageDateHeure
 
 
@@ -54,9 +55,33 @@ class ControleurVideos(tk.Tk):
         videos = self.lister_videos('./client/videos')
 
         if videos:
-            print("Lancer la lecture des vidéos ici.")
+            # Lancer la lecture de la première vidéo trouvée
+            video_path = os.path.join("./client/videos/" + videos[0])
+            cap = cv2.VideoCapture(video_path)
+
+            if not cap.isOpened():
+                print("Error: Could not open video.")
+                return
+
+            cv2.namedWindow('Video', cv2.WINDOW_NORMAL)
+            cv2.setWindowProperty('Video', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+
+            while True:
+                ret, frame = cap.read()
+                if not ret:
+                    break
+
+                cv2.imshow('Video', frame)
+                self.update()  # Mettre à jour l'interface Tkinter
+
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    break
+
+            cap.release()
+            cv2.destroyAllWindows()
         else:
             self.afficher_ecran_date_heure()
+
 
     def afficher_ecran_date_heure(self):
         self.withdraw()

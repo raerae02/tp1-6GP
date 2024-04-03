@@ -1,5 +1,4 @@
-DROP DATABASE ma_base_de_donnees;
-
+DROP DATABASE IF EXISTS ma_base_de_donnees;
 CREATE DATABASE ma_base_de_donnees;
 USE ma_base_de_donnees;
 
