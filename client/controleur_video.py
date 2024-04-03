@@ -1,6 +1,8 @@
 import tkinter as tk
 import os
-from affichage_date_heure import AffichageDateHeure
+import requests
+from client.affichage_date_heure import AffichageDateHeure
+from client.lecteur_video import LecteurVideo
 
 
 class ControleurVideos(tk.Tk):
@@ -49,12 +51,18 @@ class ControleurVideos(tk.Tk):
         extensions = ['.mp4', '.avi']
         fichiers = [f for f in os.listdir(videos_dir) if os.path.isfile(os.path.join(videos_dir, f))]
         return [f for f in fichiers if any(f.endswith(ext) for ext in extensions)]
+    
+    def lister_videos2(self):
+        reponse = requests.get('http://localhost:5000/videos')
+        if reponse.status_code == 200:
+            return reponse.json()
+        return []
 
     def demarrer_videos(self):
-        videos = self.lister_videos('./client/videos')
+        videos = self.lister_videos2()
 
         if videos:
-            print("Lancer la lecture des vidéos ici.")
+            LecteurVideo(self, videos)
         else:
             self.afficher_ecran_date_heure()
 

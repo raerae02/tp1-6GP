@@ -1,7 +1,5 @@
-DROP DATABASE ma_base_de_donnees;
-
-CREATE DATABASE ma_base_de_donnees;
-USE ma_base_de_donnees;
+CREATE DATABASE IF NOT EXISTS videos_db;
+USE videos_db;
 
 CREATE TABLE videos (
     id_video INT AUTO_INCREMENT PRIMARY KEY,
