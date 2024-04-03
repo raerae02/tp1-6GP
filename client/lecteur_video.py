@@ -1,6 +1,4 @@
 import cv2
-import tkinter as tk
-from tkinter import Toplevel
 import requests
 import time
 
@@ -9,8 +7,7 @@ class LecteurVideo:
         self.parent = parent
         self.videos = videos
         self.video_index = 0  
-        self.window = Toplevel(self.parent)
-        self.window.title("Lecteur de Vidéos")
+
         self.play_video()
         
     def marquer_video_courante(self, id_video):
@@ -23,6 +20,7 @@ class LecteurVideo:
     def play_video(self):
             if self.video_index < len(self.videos):
                 video = self.videos[self.video_index]
+                self.parent.afficher_nom_video(video['nom_video'])
                 video_path = "./client/videos/" + video['nom_video'] 
                 id_video = video['id_video']
                 
@@ -50,5 +48,7 @@ class LecteurVideo:
                 self.video_index += 1
             else:
                 print("Fin des vidéos.")
+                self.parent.afficher_nom_video(" ")
                 self.window.destroy()
+                self.parent.videos_en_lecture = False 
 

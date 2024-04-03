@@ -10,6 +10,8 @@ class ControleurVideos(tk.Tk):
         super().__init__()
         self.title("Contrôleur de Vidéos")
         self.geometry("400x300")
+        self.nom_video_en_cours = tk.StringVar(value="Vidéo en cours : ")
+        self.videos_en_lecture = False
         self.creer_widgets()
         self.after(30000, self.demarrer_videos)
 
@@ -19,9 +21,9 @@ class ControleurVideos(tk.Tk):
         self.etiquette.grid(row=0, column=0, columnspan=3, pady=(10, 20))
 
         # Labels 
-        self.text_1 = tk.Label(self, text="Vidéo en cours :")
+        self.text_1 = tk.Label(self, textvariable=self.nom_video_en_cours)
         self.text_1.grid(row=1, column=0, sticky='w', padx=10)
-
+        
         self.text_2 = tk.Label(self, text="Nombre joué aujourd'hui :")
         self.text_2.grid(row=2, column=0, sticky='w', padx=10)
 
@@ -59,10 +61,14 @@ class ControleurVideos(tk.Tk):
         return []
 
     def demarrer_videos(self):
-        videos = self.lister_videos2()
+        if not self.videos_en_lecture:
+            videos = self.lister_videos2()
 
-        if videos:
-            LecteurVideo(self, videos)
+            if videos:
+                self.videos_en_lecture = True  
+                LecteurVideo(self, videos)
+           
+
             # Lancer la lecture de la première vidéo trouvée
             # video_path = os.path.join("./client/videos/" + videos[0])
             # cap = cv2.VideoCapture(video_path)
@@ -87,11 +93,16 @@ class ControleurVideos(tk.Tk):
 
             # cap.release()
             # cv2.destroyAllWindows()
-        else:
-            self.afficher_ecran_date_heure()
+            else:
+                self.afficher_ecran_date_heure()
 
 
     def afficher_ecran_date_heure(self):
         self.withdraw()
         fenetre_date_heure = AffichageDateHeure(self)
         fenetre_date_heure.mainloop()
+        
+    def afficher_nom_video(self, nom_video):
+        self.nom_video_en_cours.set("Vidéo en cours : " + nom_video)
+        self.update_idletasks()
+
