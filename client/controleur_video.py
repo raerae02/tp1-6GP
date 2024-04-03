@@ -44,12 +44,15 @@ class ControleurVideos(tk.Tk):
         self.boutons_demarrer.place(x=140, y=205)
 
     def lister_videos(self, dossier):
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        videos_dir = os.path.join(script_dir, 'videos')
         extensions = ['.mp4', '.avi']
-        fichiers = [f for f in os.listdir(dossier) if os.path.isfile(os.path.join(dossier, f))]
+        fichiers = [f for f in os.listdir(videos_dir) if os.path.isfile(os.path.join(videos_dir, f))]
         return [f for f in fichiers if any(f.endswith(ext) for ext in extensions)]
 
     def demarrer_videos(self):
         videos = self.lister_videos('./client/videos')
+
         if videos:
             print("Lancer la lecture des vidéos ici.")
         else:
