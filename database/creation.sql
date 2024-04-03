@@ -1,5 +1,6 @@
-CREATE DATABASE ma_base_de_donnees;
+DROP DATABASE ma_base_de_donnees;
 
+CREATE DATABASE ma_base_de_donnees;
 USE ma_base_de_donnees;
 
 CREATE TABLE videos (
@@ -13,7 +14,7 @@ CREATE TABLE videos (
 CREATE TABLE video_courant (
     id_courant INT AUTO_INCREMENT PRIMARY KEY,
     id_video INT,
-    début_video TIMESTAMP,
+    debut_video TIMESTAMP,
     fin_video TIMESTAMP,
     temps_jouer INT,
     FOREIGN KEY (id_video) REFERENCES videos (id_video)
