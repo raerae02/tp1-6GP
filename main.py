@@ -12,4 +12,4 @@ if __name__ == "__main__":
     api_thread.start()
     
     app = ControleurVideos()
-    app.mainloop()
+    app.mainloop()  
