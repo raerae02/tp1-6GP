@@ -2,7 +2,7 @@ import tkinter as tk
 import os
 import requests
 from client.affichage_date_heure import AffichageDateHeure
-from client.lecteur_video import LecteurVideo
+from client.lecteur_video_copy import LecteurVideo
 import RPi.GPIO as GPIO
 
 ledPin = 12
@@ -20,10 +20,20 @@ class ControleurVideos(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Contrôleur de Vidéos")
-        self.geometry("400x300")
+        self.geometry("600x300")
+        
         self.nom_video_en_cours = tk.StringVar(value="Vidéo en cours : ")
+        self.nb_jouer_aujourdhui = tk.StringVar(value="Nombre joué aujourd'hui : ")
+        self.temps_jouer_aujourdhui = tk.StringVar(value="Temps joué aujourd'hui : ")
+        self.nb_total_videos_joues = tk.StringVar(value="Nombre total des vidéos jouées aujourd'hui : ")
+        
+        self.lecteur_video_actuel = None
         self.videos_en_lecture = False
+
+        self.stats = self.obtenir_stats_jour()
         self.creer_widgets()
+        self.mise_a_jour_ui_avec_stats(self.stats)
+
         self.after(30000, self.demarrer_videos)
 
     def creer_widgets(self):
@@ -35,11 +45,14 @@ class ControleurVideos(tk.Tk):
         self.text_1 = tk.Label(self, textvariable=self.nom_video_en_cours)
         self.text_1.grid(row=1, column=0, sticky='w', padx=10)
         
-        self.text_2 = tk.Label(self, text="Nombre joué aujourd'hui :")
+        self.text_2 = tk.Label(self, textvariable=self.nb_jouer_aujourdhui)
         self.text_2.grid(row=2, column=0, sticky='w', padx=10)
+        
+        self.text_3 = tk.Label(self, textvariable=self.temps_jouer_aujourdhui)
+        self.text_3.grid(row=2, column=1, sticky='w', padx=0)
 
-        self.text_3 = tk.Label(self, text="Nombre total des vidéos jouées aujourd'hui :")
-        self.text_3.grid(row=3, column=0, sticky='w', padx=10)
+        self.text_4 = tk.Label(self, textvariable=self.nb_total_videos_joues)
+        self.text_4.grid(row=3, column=0, sticky='w', padx=10)
 
         # Boutons
         self.boutons_locatisation = tk.Button(self, text="Localisation / Arrêt", command = self.allumer_led)
@@ -50,7 +63,7 @@ class ControleurVideos(tk.Tk):
         self.boutons_suivant.grid(row=5, column=0, pady=5, padx=(40, 0))
         self.boutons_suivant.place(x=60, y=170)
 
-        self.boutons_arreter = tk.Button(self, text="Arrêter les vidéos")
+        self.boutons_arreter = tk.Button(self, text="Arrêter les vidéos", command=self.arreter_videos)
         self.boutons_arreter.grid(row=6, column=0, padx=(60, 10), pady=5)
         self.boutons_arreter.place(x=20, y=205)
 
@@ -58,7 +71,6 @@ class ControleurVideos(tk.Tk):
         self.boutons_demarrer.grid(row=6, column=1, padx=(10, 60), pady=5)
         self.boutons_demarrer.place(x=140, y=205)
 
-    
     def clignoter_led(self, count):
         if count <= 0:
             return
@@ -70,7 +82,6 @@ class ControleurVideos(tk.Tk):
         self.clignoter_led(3)  # clignoter l'LED trois fois
 
 
-    
     def lister_videos(self, dossier):
         script_dir = os.path.dirname(os.path.abspath(__file__))
         videos_dir = os.path.join(script_dir, 'videos')
@@ -78,45 +89,26 @@ class ControleurVideos(tk.Tk):
         fichiers = [f for f in os.listdir(videos_dir) if os.path.isfile(os.path.join(videos_dir, f))]
         return [f for f in fichiers if any(f.endswith(ext) for ext in extensions)]
     
-    def lister_videos2(self):
+    def lister_videos(self):
         reponse = requests.get('http://localhost:5000/videos')
         if reponse.status_code == 200:
             return reponse.json()
         return []
 
+    def obtenir_stats_jour(self):
+        reponse = requests.get('http://localhost:5000/stats/jour')
+        if reponse.status_code == 200:
+            return reponse.json()
+        return {}
+        
     def demarrer_videos(self):
         if not self.videos_en_lecture:
-            videos = self.lister_videos2()
+            videos = self.lister_videos()
 
             if videos:
                 self.videos_en_lecture = True  
-                LecteurVideo(self, videos)
-           
-
-            # Lancer la lecture de la première vidéo trouvée
-            # video_path = os.path.join("./client/videos/" + videos[0])
-            # cap = cv2.VideoCapture(video_path)
-
-            # if not cap.isOpened():
-            #     print("Error: Could not open video.")
-            #     return
-
-            # cv2.namedWindow('Video', cv2.WINDOW_NORMAL)
-            # cv2.setWindowProperty('Video', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
-
-            # while True:
-            #     ret, frame = cap.read()
-            #     if not ret:
-            #         break
-
-            #     cv2.imshow('Video', frame)
-            #     self.update()  # Mettre à jour l'interface Tkinter
-
-            #     if cv2.waitKey(1) & 0xFF == ord('q'):
-            #         break
-
-            # cap.release()
-            # cv2.destroyAllWindows()
+                self.lecteur_video_actuel = LecteurVideo(self, videos)
+                self.lecteur_video_actuel.debuter_video_playback()
             else:
                 self.afficher_ecran_date_heure()
 
@@ -130,3 +122,17 @@ class ControleurVideos(tk.Tk):
         self.nom_video_en_cours.set("Vidéo en cours : " + nom_video)
         self.update_idletasks()
 
+    def mise_a_jour_ui_avec_stats(self, stats):
+        nb_jouer_total = sum(int(stat['nb_jouer']) for stat in stats)
+        temps_total = sum(int(stat['temps_total']) for stat in stats)
+        self.nb_jouer_aujourdhui.set("Nombre joué aujourd'hui : {}".format(nb_jouer_total))  
+        self.temps_jouer_aujourdhui.set("Temps joué aujourd'hui : {} secondes".format(temps_total)) 
+        self.update_idletasks()
+
+    def arreter_videos(self):
+        if self.lecteur_video_actuel:
+            print("Arrêt des vidéos.")
+            self.lecteur_video_actuel.arreter_lecture()  
+            self.lecteur_video_actuel = None
+            self.videos_en_lecture = False
+            self.afficher_nom_video(" ")

@@ -57,7 +57,58 @@ def terminer_video_courante():
     WHERE id_video = %s AND fin_video IS NULL
     """
     cursor.execute(query, (data['temps_jouer'], data['id_video']))
+    mettre_a_jour_stats(data['id_video'], data['temps_jouer'])
     connection.commit()
     cursor.close()
     connection.close()
     return jsonify({"success": True})
+
+def mettre_a_jour_stats(id_video, temps_jouer):
+    connection = create_connection()
+    cursor = connection.cursor()
+    
+    # Vérifier si une entrée pour aujourd'hui et cette vidéo existe déjà
+    query = """
+    SELECT id_nb FROM nb_video_jour
+    WHERE date_jour = CURDATE() AND id_video = %s
+    """
+    cursor.execute(query, (id_video,))
+    result = cursor.fetchone()
+    
+    if result:
+        # Mise à jour de l'entrée existante
+        query = """
+        UPDATE nb_video_jour
+        SET nb_jouer = nb_jouer + 1, temps_total = temps_total + %s
+        WHERE id_nb = %s
+        """
+        cursor.execute(query, (temps_jouer, result[0]))
+    else:
+        # Création d'une nouvelle entrée
+        query = """
+        INSERT INTO nb_video_jour (date_jour, id_video, nb_jouer, temps_total)
+        VALUES (CURDATE(), %s, 1, %s)
+        """
+        cursor.execute(query, (id_video, temps_jouer))
+    
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+@app.route('/stats/jour', methods=['GET'])
+def obtenir_stats_jour():
+    connection = create_connection()
+    cursor = connection.cursor(dictionary=True)
+    
+    query = """
+    SELECT id_video, SUM(nb_jouer) as nb_jouer, SUM(temps_total) as temps_total
+    FROM nb_video_jour
+    WHERE date_jour = CURDATE()
+    GROUP BY id_video
+    """
+    cursor.execute(query)
+    stats = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    
+    return jsonify(stats)
