@@ -29,6 +29,7 @@ class ControleurVideos(tk.Tk):
         
         self.lecteur_video_actuel = None
         self.videos_en_lecture = False
+        self.fenetre_date_heure = None
 
         self.stats = self.obtenir_stats_jour()
         self.creer_widgets()
@@ -119,6 +120,7 @@ class ControleurVideos(tk.Tk):
                 self.lecteur_video_actuel = LecteurVideo(self, videos)
                 self.lecteur_video_actuel.debuter_video_playback()
                 self.after(30000, self.minimiser_controleur)
+                self.fenetre_date_heure.fermer_fenetre()
             # Sinon, on affiche un l'écran de date et heure
             else:
                 GPIO.output(ledPin, GPIO.LOW)  # eteindre l'LED
@@ -127,9 +129,8 @@ class ControleurVideos(tk.Tk):
 
     # Afficher l'écran de date et heure
     def afficher_ecran_date_heure(self):
-        self.withdraw()
-        fenetre_date_heure = AffichageDateHeure(self)
-        fenetre_date_heure.mainloop()
+        self.fenetre_date_heure = AffichageDateHeure(self)
+        self.fenetre_date_heure.mainloop()
         
     def afficher_nom_video(self, nom_video):
         self.nom_video_en_cours.set("Vidéo en cours : " + nom_video)
@@ -175,6 +176,7 @@ class ControleurVideos(tk.Tk):
             self.lecteur_video_actuel = None
             self.videos_en_lecture = False
             self.afficher_nom_video(" ")
+            self.afficher_ecran_date_heure()
             
     def trouver_stats_video(self, id_video):
         for stat in self.stats['stats_par_video']:
