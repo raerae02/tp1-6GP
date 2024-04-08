@@ -2,19 +2,19 @@ import tkinter as tk
 import os
 import requests
 from client.affichage_date_heure import AffichageDateHeure
-from client.lecteur_video_copy import LecteurVideo
-import RPi.GPIO as GPIO
+from client.lecteur_video import LecteurVideo
+# import RPi.GPIO as GPIO
 
-ledPin = 12
-sensorPin = 11    
+# ledPin = 12
+# sensorPin = 11    
 
 
-def setup():
-    GPIO.setmode(GPIO.BOARD)        # use PHYSICAL GPIO Numbering
-    GPIO.setup(ledPin, GPIO.OUT)    # set ledPin to OUTPUT mode
-    GPIO.setup(sensorPin, GPIO.IN)  # set sensorPin to INPUT mode
+# def setup():
+#     GPIO.setmode(GPIO.BOARD)        # use PHYSICAL GPIO Numbering
+#     GPIO.setup(ledPin, GPIO.OUT)    # set ledPin to OUTPUT mode
+#     GPIO.setup(sensorPin, GPIO.IN)  # set sensorPin to INPUT mode
 
-setup()
+# setup()
 
 class ControleurVideos(tk.Tk):
     def __init__(self):
@@ -122,12 +122,28 @@ class ControleurVideos(tk.Tk):
         self.nom_video_en_cours.set("Vidéo en cours : " + nom_video)
         self.update_idletasks()
 
-    def mise_a_jour_ui_avec_stats(self, stats):
-        nb_jouer_total = sum(int(stat['nb_jouer']) for stat in stats)
-        temps_total = sum(int(stat['temps_total']) for stat in stats)
-        self.nb_jouer_aujourdhui.set("Nombre joué aujourd'hui : {}".format(nb_jouer_total))  
-        self.temps_jouer_aujourdhui.set("Temps joué aujourd'hui : {} secondes".format(temps_total)) 
+    def mise_a_jour_ui_avec_stats(self, stats, id_video_actuelle=None):
+        if stats:
+
+            stats_video_actuelle = self.trouver_stats_video(id_video_actuelle)
+            if stats_video_actuelle:
+                self.nb_jouer_aujourdhui.set("Nombre joué aujourd'hui : {}".format(stats_video_actuelle['nb_jouer']))
+                self.temps_jouer_aujourdhui.set("Temps joué aujourd'hui : {} secondes".format(stats_video_actuelle['temps_total']))
+            else:
+                self.nb_jouer_aujourdhui.set("Nombre joué aujourd'hui : 0")
+                self.temps_jouer_aujourdhui.set("Temps joué aujourd'hui : 0 secondes")
+            
+            stats_globales = stats['stats_globales']
+            nb_total_videos_joues = stats_globales['nb_jouer_total']
+            self.nb_total_videos_joues.set("Nombre total des vidéos jouées aujourd'hui : {}".format(nb_total_videos_joues))
+                        
+        else:
+            self.nb_jouer_aujourdhui.set("Nombre joué aujourd'hui : 0")
+            self.temps_jouer_aujourdhui.set("Temps joué aujourd'hui : 0")
+            self.nb_total_videos_joues.set("Nombre total des vidéos jouées aujourd'hui : 0")
+            
         self.update_idletasks()
+
 
     def arreter_videos(self):
         if self.lecteur_video_actuel:
@@ -136,3 +152,9 @@ class ControleurVideos(tk.Tk):
             self.lecteur_video_actuel = None
             self.videos_en_lecture = False
             self.afficher_nom_video(" ")
+            
+    def trouver_stats_video(self, id_video):
+        for stat in self.stats['stats_par_video']:
+            if stat['id_video'] == id_video:
+                return stat
+        return None 

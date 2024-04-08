@@ -9,8 +9,7 @@ def create_connection():
     try:
         print('Connecting to the MySQL database...')
         connection = mysql.connector.connect(
-            host='localhost',  # Use the IP address of the Docker container
-            port='3306',
+            host='localhost',  
             user='root',
             password='password',
             database='videos_db'
@@ -94,21 +93,37 @@ def mettre_a_jour_stats(id_video, temps_jouer):
     connection.commit()
     cursor.close()
     connection.close()
-
+    
 @app.route('/stats/jour', methods=['GET'])
 def obtenir_stats_jour():
     connection = create_connection()
     cursor = connection.cursor(dictionary=True)
     
-    query = """
-    SELECT id_video, SUM(nb_jouer) as nb_jouer, SUM(temps_total) as temps_total
+    # Requête pour les statistiques par vidéo
+    query_stats_par_video = """
+    SELECT id_video, SUM(nb_jouer) AS nb_jouer, SUM(temps_total) AS temps_total
     FROM nb_video_jour
     WHERE date_jour = CURDATE()
     GROUP BY id_video
     """
-    cursor.execute(query)
-    stats = cursor.fetchall()
+    cursor.execute(query_stats_par_video)
+    stats_par_video = cursor.fetchall()
+
+    # Requête pour les statistiques totales
+    query_stats_globales = """
+    SELECT SUM(nb_jouer) AS nb_jouer_total, SUM(temps_total) AS temps_total
+    FROM nb_video_jour
+    WHERE date_jour = CURDATE()
+    """
+    cursor.execute(query_stats_globales)
+    stats_globales = cursor.fetchone()  
+
     cursor.close()
     connection.close()
     
-    return jsonify(stats)
+    reponse = {
+        'stats_par_video': stats_par_video,
+        'stats_globales': stats_globales
+    }
+    
+    return jsonify(reponse)
