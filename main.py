@@ -2,6 +2,7 @@ import threading
 from client.controleur_video import ControleurVideos
 import time
 from api.serveur import app
+import time
 
 
 def run_api():
@@ -11,8 +12,6 @@ if __name__ == "__main__":
     api_thread = threading.Thread(target=run_api)
     api_thread.daemon = True  
     api_thread.start()
-    
-    time.sleep(2) 
-    
+    time.sleep(2)
     app = ControleurVideos()
     app.mainloop()  

@@ -3,18 +3,18 @@ import os
 import requests
 from client.affichage_date_heure import AffichageDateHeure
 from client.lecteur_video import LecteurVideo
-# import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 
-# ledPin = 12
-# sensorPin = 11    
+ledPin = 12
+sensorPin = 11    
 
 
-# def setup():
-#     GPIO.setmode(GPIO.BOARD)        # use PHYSICAL GPIO Numbering
-#     GPIO.setup(ledPin, GPIO.OUT)    # set ledPin to OUTPUT mode
-#     GPIO.setup(sensorPin, GPIO.IN)  # set sensorPin to INPUT mode
+def setup():
+    GPIO.setmode(GPIO.BOARD)        # use PHYSICAL GPIO Numbering
+    GPIO.setup(ledPin, GPIO.OUT)    # set ledPin to OUTPUT mode
+    GPIO.setup(sensorPin, GPIO.IN)  # set sensorPin to INPUT mode
 
-# setup()
+setup()
 
 class ControleurVideos(tk.Tk):
     def __init__(self):
@@ -153,10 +153,14 @@ class ControleurVideos(tk.Tk):
         if GPIO.input(sensorPin) == GPIO.HIGH:
             self.clignoter_led(3)  # Adjust the count as needed
         self.after(1000, self.check_sensor_and_blink_led)  # Check every second
+        if self.videos_en_lecture:
+            GPIO.output(ledPin, GPIO.HIGH)  # allumer l'LED
+        else:
+            GPIO.output(ledPin, GPIO.LOW)  # eteindre l'LED
 
     def arreter_videos(self):
         if self.lecteur_video_actuel:
-            GPIO.output(ledPin, GPIO.LOW)  # éteindre l'LED
+            # GPIO.output(ledPin, GPIO.LOW)  # éteindre l'LED
             print("Arrêt des vidéos.")
             self.lecteur_video_actuel.arreter_lecture()  
             self.lecteur_video_actuel = None
