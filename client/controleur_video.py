@@ -102,22 +102,25 @@ class ControleurVideos(tk.Tk):
             return reponse.json()
         return {}
         
+    # Démarrer la lecture des vidéos dans un thread séparé
     def demarrer_videos(self):
         if not self.videos_en_lecture:
             videos = self.lister_videos()
 
+            # Si des vidéos sont disponibles, on les lit
             if videos:
-                ##GPIO.output(ledPin, GPIO.HIGH)  # allumer l'LED
+                GPIO.output(ledPin, GPIO.HIGH)  # allumer l'LED
 
                 self.videos_en_lecture = True  
                 self.lecteur_video_actuel = LecteurVideo(self, videos)
                 self.lecteur_video_actuel.debuter_video_playback()
+            # Sinon, on affiche un l'écran de date et heure
             else:
                 GPIO.output(ledPin, GPIO.HIGH)  # allumer l'LED
 
                 self.afficher_ecran_date_heure()
 
-
+    # Afficher l'écran de date et heure
     def afficher_ecran_date_heure(self):
         self.withdraw()
         fenetre_date_heure = AffichageDateHeure(self)
