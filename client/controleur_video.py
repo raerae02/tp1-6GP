@@ -154,9 +154,9 @@ class ControleurVideos(tk.Tk):
 
     def check_sensor_and_blink_led(self):
         if GPIO.input(sensorPin) == GPIO.HIGH:
-            self.clignoter_led(3)  # Adjust the count as needed
+            self.clignoter_led(3)
             self.jouer_prochaine_video()
-        self.after(1000, self.check_sensor_and_blink_led)  # Check every second
+        self.after(1000, self.check_sensor_and_blink_led)  # Vérifier chaque second
         if self.videos_en_lecture:
             GPIO.output(ledPin, GPIO.HIGH)  # allumer l'LED
         else:
