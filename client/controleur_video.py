@@ -179,4 +179,5 @@ class ControleurVideos(tk.Tk):
     
     def jouer_prochaine_video(self):
         if self.lecteur_video_actuel:
+            self.clignoter_led(3)
             self.lecteur_video_actuel.passer_au_video_suivant()
