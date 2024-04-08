@@ -70,7 +70,7 @@ class ControleurVideos(tk.Tk):
 
         self.boutons_demarrer = tk.Button(self, text="Démarrer les vidéos", command=self.demarrer_videos)
         self.boutons_demarrer.grid(row=6, column=1, padx=(10, 60), pady=5)
-        self.boutons_demarrer.place(x=140, y=205)
+        self.boutons_demarrer.place(x=175, y=205)
 
     def clignoter_led(self, count):
         if count <= 0:
