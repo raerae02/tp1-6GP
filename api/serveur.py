@@ -7,7 +7,7 @@ app = Flask(__name__)
 def create_connection():
     connection = None
     try:
-        print('Connecting to the MySQL database...')
+        print('Connexion à la base de données...')
         connection = mysql.connector.connect(
             host='localhost',  
             user='root',
@@ -19,6 +19,7 @@ def create_connection():
 
     return connection
 
+# Liste toutes les vidéos dans la base de données
 @app.route('/videos', methods=['GET'])
 def lister_videos():
     connection = create_connection()
@@ -30,6 +31,7 @@ def lister_videos():
     connection.close()
     return jsonify(videos)
 
+# Marquer une vidéo comme étant en cours de lecture et enregistrer le temps de début de lecture
 @app.route('/video/current', methods=['POST'])
 def marquer_video_courante():
     data = request.json
@@ -45,6 +47,8 @@ def marquer_video_courante():
     connection.close()
     return jsonify({"success": True}), 201
 
+# Mettre à jour les informations de la vidéo courante lorsqu'elle est terminée de jouer.
+# Enregistre le temps de lecture
 @app.route('/video/current', methods=['PUT'])
 def terminer_video_courante():
     data = request.json
@@ -62,6 +66,9 @@ def terminer_video_courante():
     connection.close()
     return jsonify({"success": True})
 
+# Mettre à jour les statistiques pour une vidéo donnée pour la journée en cours
+# Si une entrée pour cette vidéo et cette journée existe déjà, elle est mise à jour (la vidéo a déjà été jouée aujourd'hui)
+# Sinon, une nouvelle entrée est créée (la vidéo n'a pas encore été jouée aujourd'hui)
 def mettre_a_jour_stats(id_video, temps_jouer):
     connection = create_connection()
     cursor = connection.cursor()
@@ -94,6 +101,8 @@ def mettre_a_jour_stats(id_video, temps_jouer):
     cursor.close()
     connection.close()
     
+# Obtenir les statistiques pour la journée en cours
+# Retourne les statistiques par vidéo et les statistiques globales
 @app.route('/stats/jour', methods=['GET'])
 def obtenir_stats_jour():
     connection = create_connection()
