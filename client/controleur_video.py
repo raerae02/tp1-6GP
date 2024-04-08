@@ -35,7 +35,7 @@ class ControleurVideos(tk.Tk):
         self.mise_a_jour_ui_avec_stats(self.stats)
 
         self.after(30000, self.demarrer_videos)
-        # self.check_sensor_and_blink_led()  # Start checking the sensor state
+        self.check_sensor_and_blink_led()  # Start checking the sensor state
 
     def creer_widgets(self):
         # Label au début de l'écran
@@ -116,7 +116,7 @@ class ControleurVideos(tk.Tk):
                 self.lecteur_video_actuel.debuter_video_playback()
             # Sinon, on affiche un l'écran de date et heure
             else:
-                GPIO.output(ledPin, GPIO.HIGH)  # allumer l'LED
+                GPIO.output(ledPin, GPIO.LOW)  # eteindre l'LED
 
                 self.afficher_ecran_date_heure()
 
@@ -155,6 +155,7 @@ class ControleurVideos(tk.Tk):
     def check_sensor_and_blink_led(self):
         if GPIO.input(sensorPin) == GPIO.HIGH:
             self.clignoter_led(3)  # Adjust the count as needed
+            self.jouer_prochaine_video()
         self.after(1000, self.check_sensor_and_blink_led)  # Check every second
         if self.videos_en_lecture:
             GPIO.output(ledPin, GPIO.HIGH)  # allumer l'LED
