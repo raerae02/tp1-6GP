@@ -2,6 +2,7 @@ import threading
 from client.controleur_video import ControleurVideos
 import time
 from api.serveur import app
+import time
 
 
 def run_api():
