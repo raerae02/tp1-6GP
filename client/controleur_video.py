@@ -3,6 +3,7 @@ import os
 import requests
 from client.affichage_date_heure import AffichageDateHeure
 from client.lecteur_video import LecteurVideo
+
 # import RPi.GPIO as GPIO
 
 # ledPin = 12
@@ -35,7 +36,7 @@ class ControleurVideos(tk.Tk):
         self.mise_a_jour_ui_avec_stats(self.stats)
 
         self.after(30000, self.demarrer_videos)
-        self.check_sensor_and_blink_led()  # Start checking the sensor state
+        # self.check_sensor_and_blink_led()  # Start checking the sensor state
 
     def creer_widgets(self):
         # Label au début de l'écran
@@ -60,7 +61,7 @@ class ControleurVideos(tk.Tk):
         self.boutons_locatisation.grid(row=4, column=0, pady=(20, 5), padx=(20, 0))
         self.boutons_locatisation.place(x=70, y=135)
 
-        self.boutons_suivant = tk.Button(self, text="Passer au vidéo suivant")
+        self.boutons_suivant = tk.Button(self, text="Passer au vidéo suivant", command=self.jouer_prochaine_video)
         self.boutons_suivant.grid(row=5, column=0, pady=5, padx=(40, 0))
         self.boutons_suivant.place(x=60, y=170)
 
@@ -107,7 +108,7 @@ class ControleurVideos(tk.Tk):
             videos = self.lister_videos()
 
             if videos:
-                GPIO.output(ledPin, GPIO.HIGH)  # allumer l'LED
+                ##GPIO.output(ledPin, GPIO.HIGH)  # allumer l'LED
 
                 self.videos_en_lecture = True  
                 self.lecteur_video_actuel = LecteurVideo(self, videos)
@@ -156,7 +157,7 @@ class ControleurVideos(tk.Tk):
 
     def arreter_videos(self):
         if self.lecteur_video_actuel:
-            GPIO.output(ledPin, GPIO.LOW)  # éteindre l'LED
+            #GPIO.output(ledPin, GPIO.LOW)  # éteindre l'LED
             print("Arrêt des vidéos.")
             self.lecteur_video_actuel.arreter_lecture()  
             self.lecteur_video_actuel = None
@@ -168,3 +169,7 @@ class ControleurVideos(tk.Tk):
             if stat['id_video'] == id_video:
                 return stat
         return None 
+    
+    def jouer_prochaine_video(self):
+        if self.lecteur_video_actuel:
+            self.lecteur_video_actuel.passer_au_video_suivant()
