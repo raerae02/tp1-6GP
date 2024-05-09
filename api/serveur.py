@@ -4,25 +4,25 @@ from mysql.connector import Error
 
 app = Flask(__name__)
 
-def create_connection():
-    connection = None
+def creer_connexion():
+    connexion = None
     try:
         print('Connexion à la base de données...')
-        connection = mysql.connector.connect(
-            host='localhost',  
+        connexion = mysql.connector.connect(
+            host='4.206.210.212',
             user='root',
-            password='password',
-            database='videos_db'
+            password='FrhMakKha1234',
+            database='objets_bd'
         )
     except Error as e:
-        print(f"The error '{e}' occurred")
+        print(f"Erreur lors de la connexion à la base de données: {e}")
 
-    return connection
+    return connexion
 
 # Liste toutes les vidéos dans la base de données
 @app.route('/videos', methods=['GET'])
 def lister_videos():
-    connection = create_connection()
+    connection = creer_connexion()
     cursor = connection.cursor(dictionary=True)
     query = "SELECT * FROM videos ORDER BY ordre"
     cursor.execute(query)
@@ -35,7 +35,7 @@ def lister_videos():
 @app.route('/video/current', methods=['POST'])
 def marquer_video_courante():
     data = request.json
-    connection = create_connection()
+    connection = creer_connexion()
     cursor = connection.cursor()
     query = """
     INSERT INTO video_courant (id_video, debut_video, fin_video, temps_jouer)
@@ -52,7 +52,7 @@ def marquer_video_courante():
 @app.route('/video/current', methods=['PUT'])
 def terminer_video_courante():
     data = request.json
-    connection = create_connection()
+    connection = creer_connexion()
     cursor = connection.cursor()
     query = """
     UPDATE video_courant
@@ -70,7 +70,7 @@ def terminer_video_courante():
 # Si une entrée pour cette vidéo et cette journée existe déjà, elle est mise à jour (la vidéo a déjà été jouée aujourd'hui)
 # Sinon, une nouvelle entrée est créée (la vidéo n'a pas encore été jouée aujourd'hui)
 def mettre_a_jour_stats(id_video, temps_jouer):
-    connection = create_connection()
+    connection = creer_connexion()
     cursor = connection.cursor()
     
     # Vérifier si une entrée pour aujourd'hui et cette vidéo existe déjà
@@ -105,7 +105,7 @@ def mettre_a_jour_stats(id_video, temps_jouer):
 # Retourne les statistiques par vidéo et les statistiques globales
 @app.route('/stats/jour', methods=['GET'])
 def obtenir_stats_jour():
-    connection = create_connection()
+    connection = creer_connexion()
     cursor = connection.cursor(dictionary=True)
     
     # Requête pour les statistiques par vidéo
@@ -136,3 +136,24 @@ def obtenir_stats_jour():
     }
     
     return jsonify(reponse)
+
+def test_connexion():
+    connexion = creer_connexion()
+    if connexion is not None and connexion.is_connected():
+        print("Test de connexion réussi!")
+        try:
+            cursor = connexion.cursor()
+            cursor.execute("SELECT VERSION();")
+            result = cursor.fetchone()
+            print("Version de la base de données:", result)
+        except Error as e:
+            print(f"Erreur lors de l'exécution de la requête: {e}")
+        finally:
+            cursor.close()
+            connexion.close()
+            print("Connexion fermée.")
+    else:
+        print("La connexion à la base de données a échoué.")
+
+if __name__ == '__main__':
+    test_connexion()
