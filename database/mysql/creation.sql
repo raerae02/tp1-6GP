@@ -1,6 +1,10 @@
 CREATE DATABASE IF NOT EXISTS videos_db;
 USE videos_db;
 
+DROP TABLE IF EXISTS nb_video_jour;
+DROP TABLE IF EXISTS video_courant;
+DROP TABLE IF EXISTS videos;
+
 CREATE TABLE videos (
     id_video INT AUTO_INCREMENT PRIMARY KEY,
     nom_video VARCHAR(255),

@@ -4,7 +4,24 @@ from mysql.connector import Error
 
 app = Flask(__name__)
 
+# Créer une connexion à la base de données locale
 def creer_connexion():
+    connexion = None
+    try:
+        print('Connexion à la base de données...')
+        connexion = mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password='password',
+            database='videos_bd',
+        )
+    except Error as e:
+        print(f"Erreur lors de la connexion à la base de données: {e}")
+        
+    return connexion
+
+# Créer une connexion à la base de données AZURE
+def creer_connexion_2():
     connexion = None
     try:
         print('Connexion à la base de données...')
@@ -137,23 +154,3 @@ def obtenir_stats_jour():
     
     return jsonify(reponse)
 
-def test_connexion():
-    connexion = creer_connexion()
-    if connexion is not None and connexion.is_connected():
-        print("Test de connexion réussi!")
-        try:
-            cursor = connexion.cursor()
-            cursor.execute("SELECT VERSION();")
-            result = cursor.fetchone()
-            print("Version de la base de données:", result)
-        except Error as e:
-            print(f"Erreur lors de l'exécution de la requête: {e}")
-        finally:
-            cursor.close()
-            connexion.close()
-            print("Connexion fermée.")
-    else:
-        print("La connexion à la base de données a échoué.")
-
-if __name__ == '__main__':
-    test_connexion()
