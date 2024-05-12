@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
   fetchObjectsStatus();
 
   function fetchObjectsStatus() {
-    fetch("http://4.206.210.212/objects/status")
+    fetch("http://4.206.210.212:5000/objects/status")
       .then((response) => response.json())
       .then((data) => populateTable(data))
       .catch((error) => {

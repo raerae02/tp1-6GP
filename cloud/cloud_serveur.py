@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify
 from api.sync import synchroniser_donnees
 from api.database import creer_connexion_cloud
+from flask_cors import CORS as cors
 
 app = Flask(__name__)
+cors(app)
 
 @app.route('/objets/status', methods=['GET'])
 def get_objets_status():
