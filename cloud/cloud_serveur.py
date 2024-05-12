@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from api.sync import synchroniser_donnees
+from ..api.sync import synchroniser_donnees
 
 app = Flask(__name__)
 
@@ -11,4 +11,5 @@ def synchronize():
     return jsonify({"success": success}), 200 if success else 500
 
 if __name__ == "__main__":
+
     app.run(host="0.0.0.0", port=5000)

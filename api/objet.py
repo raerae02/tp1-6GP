@@ -15,7 +15,6 @@ def fetch_videos_jouees():
         response = requests.get('http://localhost:5000/video/jouees', timeout=10)
         response.raise_for_status()
         videos_jouees = response.json()
-        print(f"Videos jouees: {videos_jouees}")
         return videos_jouees
     except requests.exceptions.RequestException as e:
         print(f"Failed to fetch videos jouees: {e}")
@@ -37,6 +36,7 @@ def collect_data():
             } for video in videos_jouees
         ]
     }
+ 
     return data
 
 def save_data_locally(data):
