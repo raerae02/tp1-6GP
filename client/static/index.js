@@ -2,9 +2,15 @@ document.addEventListener("DOMContentLoaded", function () {
   fetchObjectsStatus();
 
   function fetchObjectsStatus() {
-    fetch("http://4.206.210.212:5000/objects/status")
+    fetch("http://4.206.210.212:5000/objets/status")
       .then((response) => response.json())
-      .then((data) => populateTable(data))
+      .then((data) => {
+        if (data.success) {
+          populateTable(data.objets);
+        } else {
+          console.log("Data fetch unsuccessful");
+        }
+      })
       .catch((error) => {
         console.log("Erreur fetchObjectsStatus", error);
       });
@@ -16,12 +22,12 @@ document.addEventListener("DOMContentLoaded", function () {
     objects.forEach((object) => {
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td>${object.id_objet}</td>
-        <td>${object.nom_objet}</td>
-        <td>${object.local_objet}</td>
-        <td>${object.is_localisation ? "Enabled" : "Disabled"}</td>
+        <td>${object[0]}</td>
+        <td>${object[1]}</td>
+        <td>${object[2]}</td>
+        <td>${object[3] ? "Enabled" : "Disabled"}</td>
         <td><button onclick="enableLocalization(${
-          object.id_objet
+          object[0]
         })">Enable Localization</button></td>
       `;
       tableBody.appendChild(row);
