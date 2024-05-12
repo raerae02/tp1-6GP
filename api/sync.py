@@ -1,4 +1,5 @@
-from api.database import creer_connexion, creer_connexion_cloud
+from api.database import creer_connexion_cloud
+from datetime import datetime
 
 def synchroniser_donnees(data):
     try:
@@ -19,10 +20,11 @@ def synchroniser_donnees(data):
                 INSERT INTO objets (id_objet, nom_objet, local_objet, is_localisation)
                 VALUES (%s, %s, %s, %s)
             """, (id_objet, 'Unknown', 'Unknown', False))
-
+            
         for video in data['videos']:
             id_video = video['video']
-            date_jour = video['date']
+            date_str = video['date']
+            date_jour = datetime.strptime(date_str, '%a, %d %b %Y %H:%M:%S %Z').strftime('%Y-%m-%d') # convertir la date en format 'YYYY-MM-DD'
             nb_jouer = video['nb']
             temps_jouer = video['temps']
 
