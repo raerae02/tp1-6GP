@@ -1,40 +1,8 @@
 from flask import Flask, jsonify, request
-import mysql.connector
-from mysql.connector import Error
+from .database import creer_connexion
+from .sync import synchroniser_donnees
 
 app = Flask(__name__)
-
-# Créer une connexion à la base de données locale
-def creer_connexion():
-    connexion = None
-    try:
-        print('Connexion à la base de données...')
-        connexion = mysql.connector.connect(
-            host='localhost',
-            user='root',
-            password='password',
-            database='videos_bd',
-        )
-    except Error as e:
-        print(f"Erreur lors de la connexion à la base de données: {e}")
-        
-    return connexion
-
-# Créer une connexion à la base de données AZURE
-def creer_connexion_2():
-    connexion = None
-    try:
-        print('Connexion à la base de données...')
-        connexion = mysql.connector.connect(
-            host='4.206.210.212',
-            user='root',
-            password='FrhMakKha1234',
-            database='objets_bd'
-        )
-    except Error as e:
-        print(f"Erreur lors de la connexion à la base de données: {e}")
-
-    return connexion
 
 # Liste toutes les vidéos dans la base de données
 @app.route('/videos', methods=['GET'])
@@ -154,3 +122,27 @@ def obtenir_stats_jour():
     
     return jsonify(reponse)
 
+# Obtient les vidéos jouées pour la journée en cours
+@app.route('/video/jouees', methods=['GET'])
+def obtenir_videos_jouees():
+    connexion = creer_connexion()
+    cursor = connexion.cursor(dictionary=True)
+    
+    query = """
+    SELECT v.id_video, CURDATE() AS date_jour, nvj.nb_jouer, nvj.temps_total
+    FROM videos v
+    JOIN nb_video_jour nvj ON v.id_video = nvj.id_video
+    WHERE nvj.date_jour = CURDATE()
+    """
+    cursor.execute(query)
+    videos_jouees = cursor.fetchall()
+    cursor.close()
+    connexion.close()
+    return jsonify(videos_jouees)
+
+# Synchroniser les données avec la base de données cloud
+@app.route('/synchronize', methods=['POST'])
+def synchronize():
+    data = request.json
+    success = synchroniser_donnees(data)
+    return jsonify({"success": success}), 200 if success else 500

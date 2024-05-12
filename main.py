@@ -1,19 +1,34 @@
 import threading
-from client.controleur_video import ControleurVideos
+#from client.controleur_video import ControleurVideos
 import time
 from api.serveur import app
 import time
+from api.objet import run_data_collection
 
 
 def run_api():
+    print("Starting Flask API server...")
+
     app.run(debug=True, port=5000, use_reloader=False)
 
+
 if __name__ == "__main__":
+    print("Initializing server...")
+
     api_thread = threading.Thread(target=run_api)
     api_thread.daemon = True  
     api_thread.start()
         
-    time.sleep(2) 
+    print("Server started. API thread is running.")
     
-    app = ControleurVideos()
-    app.mainloop()  
+    print("Initializing data collection...")
+    # data_collection_thread = threading.Thread(target=run_data_collection)
+    # data_collection_thread.daemon = True
+    # data_collection_thread.start()
+    run_data_collection()
+    print("Data collection thread is running.")
+    
+    # time.sleep(2) 
+    
+    # app = ControleurVideos()
+    # app.mainloop()  

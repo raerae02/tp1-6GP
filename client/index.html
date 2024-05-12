@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Device Dashboard</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Device Dashboard</h1>
+      <div class="clock" id="clock"></div>
+    </header>
+    <nav>
+      <a href="#dashboard">Dashboard</a> |
+      <a href="#management">Device Management</a> |
+      <a href="#logs">Video Logs</a>
+    </nav>
+    <main>
+      <h2>Device Overview</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Location</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="data-rows"></tbody>
+      </table>
+    </main>
+    <footer>
+      <p>© 2024 Device Dashboard</p>
+    </footer>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        fetch("/api/data")
+          .then((response) => response.json())
+          .then((data) => {
+            const tableBody = document.getElementById("data-rows");
+            data.forEach((item) => {
+              const row = document.createElement("tr");
+              row.innerHTML = `
+          <td>${item.id_objet}</td>
+          <td>${item.nom_objet}</td>
+          <td>${item.local_objet}</td>
+          <td>${item.is_localisation}</td>
+          <td>
+            <button>View Details</button>
+            <button>Activate Localization</button>
+          </td>
+        `;
+              tableBody.appendChild(row);
+            });
+          })
+          .catch((error) => console.error("Error loading the data:", error));
+      });
+
+      function updateClock() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString();
+        document.getElementById("clock").textContent = timeString;
+      }
+      setInterval(updateClock, 1000);
+      updateClock();
+    </script>
+  </body>
+</html>
