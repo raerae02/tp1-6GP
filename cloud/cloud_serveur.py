@@ -10,7 +10,6 @@ cors(app)
 
 VIDEO_DIR = './../raspberrypi/videos'
 
-
 def fetch_object_details(id_objet):
     connection = creer_connexion_cloud()
     cursor = connection.cursor(dictionary=True)
@@ -63,18 +62,17 @@ def synchronize_data(data):
     if success:
         try:
             response_data = get_videos_for_object(data['objet'])
-            return jsonify(response_data), 200
+            return response_data, 200
         except Exception as e:
-            return jsonify({"success": False, "message": str(e)}), 500
+            return {"success": False, "message": str(e)}, 500
     else:
-        return jsonify({"success": False}), 500
-    
+        return {"success": False}, 500
+
 # Synchroniser les données avec la base de données cloud
 @app.route('/synchronize', methods=['POST'])
 def synchronize():
     data = request.json
     response_data, status_code = synchronize_data(data)
-
     return jsonify(response_data), status_code
 
 # Obtenir les détails des objets

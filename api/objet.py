@@ -4,7 +4,7 @@ import json
 import os
 from datetime import datetime
 import hashlib
-from sync import synchroniser_donnees_locale_avec_cloud
+from api.sync import synchroniser_donnees_locale_avec_cloud
 
 
 # Configuration
