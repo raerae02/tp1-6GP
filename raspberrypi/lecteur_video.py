@@ -48,7 +48,7 @@ class LecteurVideo:
         while self.video_index < len(self.videos) and not self.arret_demande.is_set():
             video = self.videos[self.video_index]
             self.parent.afficher_nom_video(video['nom_video'])
-            video_path = "./client/videos/" + video['nom_video']
+            video_path = "./raspberrypi/videos/" + video['nom_video']
             id_video = video['id_video']
             print("demarrer video : " +str(id_video) + " " + video_path)
             

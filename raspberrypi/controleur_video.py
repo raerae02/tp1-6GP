@@ -36,7 +36,7 @@ class ControleurVideos(tk.Tk):
         self.mise_a_jour_ui_avec_stats(self.stats)
 
         self.after(30000, self.demarrer_videos)
-        self.check_sensor_and_blink_led()  
+        # self.check_sensor_and_blink_led()
 
 
 
@@ -120,7 +120,7 @@ class ControleurVideos(tk.Tk):
                 self.lecteur_video_actuel = LecteurVideo(self, videos)
                 self.lecteur_video_actuel.debuter_video_playback()
                 self.after(30000, self.minimiser_controleur)
-                self.fenetre_date_heure.fermer_fenetre()
+                # self.fenetre_date_heure.fermer_fenetre()
             # Sinon, on affiche un l'écran de date et heure
             else:
               #  GPIO.output(ledPin, GPIO.LOW)  # eteindre l'LED

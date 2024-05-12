@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
-from .database import creer_connexion
-from .sync import synchroniser_donnees
+from api.database import creer_connexion
+from api.sync import synchroniser_donnees
 
 app = Flask(__name__)
 

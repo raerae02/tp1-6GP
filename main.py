@@ -13,6 +13,8 @@ def run_api():
 
 
 if __name__ == "__main__":
+
+
     print("Initializing server...")
 
     api_thread = threading.Thread(target=run_api)
@@ -25,10 +27,11 @@ if __name__ == "__main__":
     data_collection_thread = threading.Thread(target=run_data_collection)
     data_collection_thread.daemon = True
     data_collection_thread.start()
-    run_data_collection()
     print("Data collection thread is running.")
     
     time.sleep(2) 
-    
+
+    print("starting contoleur video")
     app = ControleurVideos()
-    app.mainloop()  
+
+    app.mainloop()
