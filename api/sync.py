@@ -23,8 +23,7 @@ def synchroniser_donnees(data):
             
         for video in data['videos']:
             id_video = video['video']
-            date_str = video['date']
-            date_jour = datetime.strptime(date_str, '%a, %d %b %Y %H:%M:%S %Z').strftime('%Y-%m-%d') # convertir la date en format 'YYYY-MM-DD'
+            date_jour = video['date']  
             nb_jouer = video['nb']
             temps_jouer = video['temps']
 
