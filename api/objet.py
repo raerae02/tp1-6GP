@@ -5,7 +5,7 @@ import os
 from datetime import datetime
 
 # Configuration
-SERVER_URL = 'http://127.0.0.1:5000/synchronize'
+SERVER_URL = 'http://4.206.210.212:5000/synchronize'
 BUFFER_FILE = 'data_buffer.json'
 ID_OBJET = 1  
 LOCALISATION = 'Montreal'

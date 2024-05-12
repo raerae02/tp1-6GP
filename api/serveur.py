@@ -139,10 +139,3 @@ def obtenir_videos_jouees():
     cursor.close()
     connexion.close()
     return jsonify(videos_jouees)
-
-# Synchroniser les données avec la base de données cloud
-@app.route('/synchronize', methods=['POST'])
-def synchronize():
-    data = request.json
-    success = synchroniser_donnees(data)
-    return jsonify({"success": success}), 200 if success else 500

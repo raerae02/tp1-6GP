@@ -3,12 +3,10 @@ from api.database import creer_connexion, creer_connexion_cloud
 def synchroniser_donnees(data):
     try:
         conn_cloud = creer_connexion_cloud()
-        conn_locale = creer_connexion()
-        if not conn_cloud or not conn_locale:
+        if not conn_cloud :
             return False
 
         cloud_cursor = conn_cloud.cursor()
-        local_cursor = conn_locale.cursor()
 
         # Verifier si l'objet existe dans la base de données
         id_objet = data['objet']
@@ -54,6 +52,4 @@ def synchroniser_donnees(data):
         return False
     finally:
         if cloud_cursor: cloud_cursor.close()
-        if local_cursor: local_cursor.close()
         if conn_cloud: conn_cloud.close()
-        if conn_locale: conn_locale.close()
