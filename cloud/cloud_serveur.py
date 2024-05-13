@@ -94,29 +94,16 @@ def get_objets_status():
     return jsonify({"success": True, "objets": objets}), 200
     
 # Servir les fichiers vidéo
-@app.route('/videos/<int:id_video>', methods=['GET'])
-def serve_video(id_video):
-    connection = creer_connexion_cloud()
-    cursor = connection.cursor(dictionary=True)
+@app.route('/videos/<string:video_name>', methods=['GET'])
+def servir_videos(video_name):
+    video_path = os.path.join(VIDEO_DIR, video_name)
+    print(f"Requested video path: {video_path}")
     
-    query = "SELECT nom_video FROM videos_objets WHERE id_video = %s"
-    cursor.execute(query, (id_video,))
-    video = cursor.fetchone()
-    print(video)
-    
-    cursor.close()
-    connection.close()
-
-    if video:
-        video_path = os.path.join(VIDEO_DIR, video['nom_video'])
-        print(video_path)
-        if os.path.exists(video_path):
-            print("sending video")
-            return send_from_directory(VIDEO_DIR, video['nom_video'])
-        else:
-            return jsonify({"success": False, "message": "Video file not found"}), 404
+    if os.path.exists(video_path):
+        print("Sending video")
+        return send_from_directory(VIDEO_DIR, video_name)
     else:
-        return jsonify({"success": False, "message": "Video ID not found in database"}), 404
+        return jsonify({"success": False, "message": "Video file not found"}), 404
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
