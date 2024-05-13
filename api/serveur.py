@@ -1,5 +1,10 @@
 from flask import Flask, jsonify, request
 from api.database import creer_connexion
+import os
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -159,4 +164,20 @@ def execute_command():
     else:
         return jsonify({"success": False, "message": "Unknown command"}), 400
     return jsonify({"success": True, "message": f"Command '{command}' executed"}), 200
+
+@app.route('/upload_video', methods=['POST'])
+def upload_video():
+    if 'video' not in request.files:
+        return jsonify({"success": False, "message": "No video file provided"}), 400
+
+    video_file = request.files['video']
+    
+    # Save the video file locally
+    try:
+        video_path = os.path.join(os.getenv('VIDEO_DIR'), video_file.filename)
+        video_file.save(video_path)
+        return jsonify({"success": True, "video_path": video_path}), 200
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+
 
