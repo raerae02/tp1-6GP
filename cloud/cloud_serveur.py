@@ -54,6 +54,7 @@ def get_videos_for_object(id_objet):
         **objet_details,
         "videos": video_details
     }
+    print("response_data: ", response_data)
     return response_data
 
 # Synchroniser les données avec la base de données cloud, puis retourner les vidéos pour l'objet spécifié
