@@ -1,11 +1,5 @@
 from api.database import creer_connexion_cloud, creer_connexion
 from datetime import datetime
-import os
-from dotenv import load_dotenv
-load_dotenv()
-
-NOM_OBJET = os.getenv('NOM_OBJET')
-RASPBERRY_PI_URL = os.getenv('RASPBERRY_PI_URL')
 
 # Synchroniser les données de la base de données cloud avec les données de la base de données locale
 def synchroniser_donnees_cloud_avec_locale(data):
@@ -21,6 +15,8 @@ def synchroniser_donnees_cloud_avec_locale(data):
         # Verifier si l'objet existe dans la base de données
         print("data: ", data)
         id_objet = data['objet']
+        nom_objet = data['nom_objet']
+        ip_objet = data['ip_objet']
         cloud_cursor.execute("SELECT id_objet FROM objets WHERE id_objet = %s", (id_objet,))
         objet_existe = cloud_cursor.fetchone()
 
@@ -29,13 +25,13 @@ def synchroniser_donnees_cloud_avec_locale(data):
             cloud_cursor.execute("""
                 INSERT INTO objets (id_objet, nom_objet, local_objet, is_localisation, objet_ip)
                 VALUES (%s, %s, %s, %s, %s)
-            """, (id_objet, NOM_OBJET, 'Unknown', False, RASPBERRY_PI_URL))
+            """, (id_objet, nom_objet, 'Unknown', False, ip_objet))
             print("objet_existe: ", objet_existe)
         else:
             # Mettre a jour l'adresse IP de l'objet
             cloud_cursor.execute("""
                 UPDATE objets SET objet_ip = %s WHERE id_objet = %s
-            """, (RASPBERRY_PI_URL, id_objet))
+            """, (ip_objet, id_objet))
             
         print("id_objet: ", id_objet)
             

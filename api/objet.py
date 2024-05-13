@@ -18,6 +18,8 @@ BUFFER_FILE = 'data_buffer.json'
 SERVER_URL = os.getenv('SERVER_URL')
 ID_OBJET = os.getenv('ID_OBJET')
 VIDEO_DIR = os.getenv('VIDEO_DIR')
+NOM_OBJET = os.getenv('NOM_OBJET')
+RASPBERRY_PI_URL = os.getenv('RASPBERRY_PI_URL')
 
 def fetch_videos_jouees():
     try:
@@ -33,6 +35,8 @@ def collect_data():
     videos_jouees = fetch_videos_jouees()
     data = {
         "objet": ID_OBJET,
+        "nom_objet": NOM_OBJET,
+        "ip_objet": RASPBERRY_PI_URL,
         "is_display_ads": "yes" if videos_jouees else "no",
         "videos": [
             {
