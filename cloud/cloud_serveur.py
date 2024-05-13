@@ -100,13 +100,16 @@ def serve_video(id_video):
     query = "SELECT nom_video FROM videos_objets WHERE id_video = %s"
     cursor.execute(query, (id_video,))
     video = cursor.fetchone()
+    print(video)
     
     cursor.close()
     connection.close()
 
     if video:
         video_path = os.path.join(VIDEO_DIR, video['nom_video'])
+        print(video_path)
         if os.path.exists(video_path):
+            print("sending video")
             return send_from_directory(VIDEO_DIR, video['nom_video'])
         else:
             return jsonify({"success": False, "message": "Video file not found"}), 404
