@@ -5,8 +5,9 @@ import os
 from datetime import datetime
 import hashlib
 from api.sync import synchroniser_donnees_locale_avec_cloud
-
-
+import os
+from dotenv import load_dotenv
+load_dotenv()
 # Configuration
 SERVER_URL = 'http://4.206.210.212:5000'
 BUFFER_FILE = 'data_buffer.json'
@@ -14,7 +15,7 @@ ID_OBJET = 2
 NOM_OBJET = 'RaspberryPi-Raed'
 LOCALISATION = 'Montreal'
 #VIDEO_DIR = '../raspberrypi/videos'
-VIDEO_DIR = '/Users/raed/Developpement Projects/School/Hiver 2024/Objets-Connecter/tp1-6GP/raspberrypi/videos'
+VIDEO_DIR = os.getenv('VIDEO_DIR')
 
 def fetch_videos_jouees():
     try:
