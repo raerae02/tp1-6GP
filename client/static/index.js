@@ -41,18 +41,14 @@ document.addEventListener("DOMContentLoaded", function () {
         <td>${object[2]}</td>
         <td>${object[3] ? "Enabled" : "Disabled"}</td>
         <td>
-          <button onclick="sendCommand(${
-            object[0]
-          }, 'next_video')">Prochain video</button>
-          <button onclick="sendCommand(${
-            object[0]
-          }, 'stop_video')">Arreter videos</button>
-          <button onclick="sendCommand(${
-            object[0]
-          }, 'start_video')">Demarrer videos</button>
-          <button onclick="enableLocalization(${
-            object[0]
-          })">Activer Localization</button>
+          <button onclick="sendCommand(${object[0]
+        }, 'next_video')">Prochain video</button>
+          <button onclick="sendCommand(${object[0]
+        }, 'stop_video')">Arreter videos</button>
+          <button onclick="sendCommand(${object[0]
+        }, 'start_video')">Demarrer videos</button>
+          <button onclick="enableLocalization(${object[0]
+        })">Activer Localization</button>
         </td>
       `;
       tableBody.appendChild(row);
@@ -83,3 +79,34 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   };
 });
+
+function uploadVideo() {
+  const fileInput = document.getElementById('video-upload');
+  const file = fileInput.files[0];
+
+  if (!file) {
+    alert('Veuillez sélectionner un fichier.');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('video', file);
+
+  fetch('http://4.206.210.212:5000/upload_video', {
+    method: 'POST',
+    body: formData,
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        alert('Vidéo uploadée avec succès.');
+      } else {
+        alert('Erreur lors de l\'upload de la vidéo.');
+      }
+    })
+    .catch(error => {
+      console.error('Erreur lors de l\'upload de la vidéo:', error);
+      alert('Une erreur est survenue lors de l\'upload de la vidéo.');
+    });
+}
+

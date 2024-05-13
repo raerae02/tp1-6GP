@@ -159,3 +159,4 @@ def execute_command():
     else:
         return jsonify({"success": False, "message": "Unknown command"}), 400
     return jsonify({"success": True, "message": f"Command '{command}' executed"}), 200
+

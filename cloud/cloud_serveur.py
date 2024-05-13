@@ -163,6 +163,16 @@ def get_stats():
         
     
     return jsonify({"success": True, "stats": stats}), 200
+
+@app.route('/upload_video', methods=['POST'])
+def upload_video():
+    video_file = request.files['video']
+    if not video_file:
+        return jsonify({"success": False, "message": "No video file provided"}), 400
+    
+    # Handle the video upload here, e.g., save the file to a cloud storage
+    
+    return jsonify({"success": True}), 200
     
 
 if __name__ == "__main__":
