@@ -1,13 +1,9 @@
-from datetime import datetime
 from flask import Flask, jsonify, request
 from api.database import creer_connexion
 
 app = Flask(__name__)
 
-# Get the current date in the correct format
-def get_current_date():
-    return datetime.now().strftime('%Y-%m-%d')
-
+# Liste toutes les vidéos dans la base de données
 @app.route('/videos', methods=['GET'])
 def lister_videos():
     connection = creer_connexion()
@@ -19,6 +15,7 @@ def lister_videos():
     connection.close()
     return jsonify(videos)
 
+# Marquer une vidéo comme étant en cours de lecture et enregistrer le temps de début de lecture
 @app.route('/video/current', methods=['POST'])
 def marquer_video_courante():
     data = request.json
@@ -34,6 +31,8 @@ def marquer_video_courante():
     connection.close()
     return jsonify({"success": True}), 201
 
+# Mettre à jour les informations de la vidéo courante lorsqu'elle est terminée de jouer.
+# Enregistre le temps de lecture
 @app.route('/video/current', methods=['PUT'])
 def terminer_video_courante():
     data = request.json
@@ -51,19 +50,23 @@ def terminer_video_courante():
     connection.close()
     return jsonify({"success": True})
 
+# Mettre à jour les statistiques pour une vidéo donnée pour la journée en cours
+# Si une entrée pour cette vidéo et cette journée existe déjà, elle est mise à jour (la vidéo a déjà été jouée aujourd'hui)
+# Sinon, une nouvelle entrée est créée (la vidéo n'a pas encore été jouée aujourd'hui)
 def mettre_a_jour_stats(id_video, temps_jouer):
-    today_date = get_current_date()
     connection = creer_connexion()
     cursor = connection.cursor()
     
+    # Vérifier si une entrée pour aujourd'hui et cette vidéo existe déjà
     query = """
     SELECT id_nb FROM nb_video_jour
-    WHERE date_jour = %s AND id_video = %s
+    WHERE date_jour = CURDATE() AND id_video = %s
     """
-    cursor.execute(query, (today_date, id_video))
+    cursor.execute(query, (id_video,))
     result = cursor.fetchone()
     
     if result:
+        # Mise à jour de l'entrée existante
         query = """
         UPDATE nb_video_jour
         SET nb_jouer = nb_jouer + 1, temps_total = temps_total + %s
@@ -71,62 +74,67 @@ def mettre_a_jour_stats(id_video, temps_jouer):
         """
         cursor.execute(query, (temps_jouer, result[0]))
     else:
+        # Création d'une nouvelle entrée
         query = """
         INSERT INTO nb_video_jour (date_jour, id_video, nb_jouer, temps_total)
-        VALUES (%s, %s, 1, %s)
+        VALUES (CURDATE(), %s, 1, %s)
         """
-        cursor.execute(query, (today_date, id_video, temps_jouer))
+        cursor.execute(query, (id_video, temps_jouer))
     
     connection.commit()
     cursor.close()
     connection.close()
-
+    
+# Obtenir les statistiques pour la journée en cours
+# Retourne les statistiques par vidéo et les statistiques globales
 @app.route('/stats/jour', methods=['GET'])
 def obtenir_stats_jour():
-    today_date = get_current_date()
     connection = creer_connexion()
     cursor = connection.cursor(dictionary=True)
     
+    # Requête pour les statistiques par vidéo
     query_stats_par_video = """
     SELECT id_video, SUM(nb_jouer) AS nb_jouer, SUM(temps_total) AS temps_total
-    FROM nb_video_jour WHERE date_jour = %s GROUP BY id_video
+    FROM nb_video_jour
+    WHERE date_jour = CURDATE()
+    GROUP BY id_video
     """
-    cursor.execute(query_stats_par_video, (today_date,))
+    cursor.execute(query_stats_par_video)
     stats_par_video = cursor.fetchall()
 
+    # Requête pour les statistiques totales
     query_stats_globales = """
     SELECT SUM(nb_jouer) AS nb_jouer_total, SUM(temps_total) AS temps_total
-    FROM nb_video_jour WHERE date_jour = %s
+    FROM nb_video_jour
+    WHERE date_jour = CURDATE()
     """
-    cursor.execute(query_stats_globales, (today_date,))
+    cursor.execute(query_stats_globales)
     stats_globales = cursor.fetchone()  
 
     cursor.close()
     connection.close()
     
-    response = {
+    reponse = {
         'stats_par_video': stats_par_video,
         'stats_globales': stats_globales
     }
     
-    return jsonify(response)
+    return jsonify(reponse)
 
+# Obtient les vidéos jouées pour la journée en cours
 @app.route('/video/jouees', methods=['GET'])
 def obtenir_videos_jouees():
-    today_date = get_current_date()
-    connection = creer_connexion()
-    cursor = connection.cursor(dictionary=True)
-
+    connexion = creer_connexion()
+    cursor = connexion.cursor(dictionary=True)
     
     query = """
-    SELECT v.id_video, %s AS date_jour, nvj.nb_jouer, nvj.temps_total
+    SELECT v.id_video, v.nom_video, CURDATE() AS date_jour, nvj.nb_jouer, nvj.temps_total
     FROM videos v
     JOIN nb_video_jour nvj ON v.id_video = nvj.id_video
-    WHERE nvj.date_jour = %s
+    WHERE nvj.date_jour = CURDATE()
     """
-    cursor.execute(query, (today_date, today_date))
-
+    cursor.execute(query)
     videos_jouees = cursor.fetchall()
     cursor.close()
-    connection.close()
+    connexion.close()
     return jsonify(videos_jouees)
