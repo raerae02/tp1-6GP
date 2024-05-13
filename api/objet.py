@@ -20,6 +20,8 @@ ID_OBJET = os.getenv('ID_OBJET')
 VIDEO_DIR = os.getenv('VIDEO_DIR')
 NOM_OBJET = os.getenv('NOM_OBJET')
 RASPBERRY_PI_URL = os.getenv('RASPBERRY_PI_URL')
+print("RASPBERRY_PI_URL: ", RASPBERRY_PI_URL)
+print("SERVER_URL: ", SERVER_URL)
 
 def fetch_videos_jouees():
     try:
