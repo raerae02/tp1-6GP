@@ -17,7 +17,7 @@ def fetch_object_details(id_objet):
     connection = creer_connexion_cloud()
     cursor = connection.cursor(dictionary=True)
     
-    query_objet = "SELECT id_objet, nom_objet, local_objet, is_localisation, ip_objet FROM objets WHERE id_objet = %s"
+    query_objet = "SELECT id_objet, nom_objet, local_objet, is_localisation, objet_ip FROM objets WHERE id_objet = %s"
     cursor.execute(query_objet, (id_objet,))
     objet = cursor.fetchone()
     
@@ -32,7 +32,7 @@ def fetch_object_details(id_objet):
         "nom_objet": objet['nom_objet'],
         "local": objet['local_objet'],
         "is_localisation": "yes" if objet['is_localisation'] else "no",
-        "ip_objet": objet['ip_objet']
+        "objet_ip": objet['objet_ip']
     }
 
 def fetch_video_details(id_objet):

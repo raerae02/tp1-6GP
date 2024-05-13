@@ -16,7 +16,7 @@ def synchroniser_donnees_cloud_avec_locale(data):
         print("data: ", data)
         id_objet = data['objet']
         nom_objet = data['nom_objet']
-        ip_objet = data['ip_objet']
+        objet_ip = data['objet_ip']
         cloud_cursor.execute("SELECT id_objet FROM objets WHERE id_objet = %s", (id_objet,))
         objet_existe = cloud_cursor.fetchone()
 
@@ -25,13 +25,13 @@ def synchroniser_donnees_cloud_avec_locale(data):
             cloud_cursor.execute("""
                 INSERT INTO objets (id_objet, nom_objet, local_objet, is_localisation, objet_ip)
                 VALUES (%s, %s, %s, %s, %s)
-            """, (id_objet, nom_objet, 'Unknown', False, ip_objet))
+            """, (id_objet, nom_objet, 'Unknown', False, objet_ip))
             print("objet_existe: ", objet_existe)
         else:
             # Mettre a jour l'adresse IP de l'objet
             cloud_cursor.execute("""
                 UPDATE objets SET objet_ip = %s WHERE id_objet = %s
-            """, (ip_objet, id_objet))
+            """, (objet_ip, id_objet))
             
         print("id_objet: ", id_objet)
             

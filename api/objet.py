@@ -38,7 +38,7 @@ def collect_data():
     data = {
         "objet": ID_OBJET,
         "nom_objet": NOM_OBJET,
-        "ip_objet": RASPBERRY_PI_URL,
+        "objet_ip": RASPBERRY_PI_URL,
         "is_display_ads": "yes" if videos_jouees else "no",
         "videos": [
             {
