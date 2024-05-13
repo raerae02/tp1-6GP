@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }
 
-  function fetchVideos(id_objet) {
+  window.fetchVideos = function (id_objet) {
     fetch(`http://4.206.210.212:5000/get-videos/${id_objet}`)
       .then((response) => response.json())
       .then((data) => {
@@ -59,14 +59,14 @@ document.addEventListener("DOMContentLoaded", function () {
       .catch((error) => {
         console.log("Error fetching videos:", error);
       });
-  }
+  };
 
   function displayVideos(videos) {
     const videosList = document.getElementById("videos-list");
     videosList.innerHTML = "";
     videos.forEach((video) => {
       const listItem = document.createElement("li");
-      listItem.textContent = `Video ID: ${video.id_video}, Name: ${video.nom_video}, Size: ${video.taille_video}, MD5: ${video.md5_video}, Order: ${video.ordre_video}`;
+      listItem.textContent = `Video ID: ${video.id_video}, Nom: ${video.nom_video}`;
       videosList.appendChild(listItem);
     });
   }
