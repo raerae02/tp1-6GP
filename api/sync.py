@@ -21,9 +21,14 @@ def synchroniser_donnees_cloud_avec_locale(data):
                 INSERT INTO objets (id_objet, nom_objet, local_objet, is_localisation)
                 VALUES (%s, %s, %s, %s)
             """, (id_objet, 'Unknown', 'Unknown', False))
+            print("objet_existe: ", objet_existe)
+        
+        print("id_objet: ", id_objet)
             
         for video in data['videos']:
             id_video = video['video']
+            nom_video = video['nom_video']
+            print("nom_video: ", nom_video)
             date_str = video['date']
             date_jour = datetime.strptime(date_str, '%a, %d %b %Y %H:%M:%S %Z').strftime('%Y-%m-%d') # convertir la date en format 'YYYY-MM-DD'
             nb_jouer = video['nb']
@@ -38,7 +43,7 @@ def synchroniser_donnees_cloud_avec_locale(data):
                 cloud_cursor.execute("""
                     INSERT INTO videos_objets (id_video, id_objet, nom_video, taille_video, md5_video, ordre_video)
                     VALUES (%s, %s, %s, %s, %s, %s)
-                """, (id_video, id_objet, 'Unknown', 0, '', 0))
+                """, (id_video, id_objet, nom_video, 0, '', 0))
 
             # Inserer ou mettre a jour les statistiques de la video pour la journée
             query_cloud = """

@@ -34,6 +34,7 @@ def collect_data():
         "videos": [
             {
                 "video": video["id_video"],
+                "nom_video": video["nom_video"],
                 "date": video["date_jour"],
                 "nb": video["nb_jouer"],
                 "temps": video["temps_total"]
@@ -59,7 +60,7 @@ def synchronize_videos(videos):
         video_path = os.path.join(VIDEO_DIR, video['nom_video'])
         if not os.path.exists(video_path) or calculate_md5(video_path) != video['md5_video']:
             print(f"Video {video['nom_video']} missing or checksum mismatch. Downloading...")
-            download_video(f"{SERVER_URL}/videos/{video['id_video']}", video_path)
+            download_video(f"{SERVER_URL}/videos/{video['nom_video']}", video_path)
 
 
 def send_data_to_server(data):

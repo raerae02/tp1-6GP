@@ -128,7 +128,7 @@ def obtenir_videos_jouees():
     cursor = connexion.cursor(dictionary=True)
     
     query = """
-    SELECT v.id_video, CURDATE() AS date_jour, nvj.nb_jouer, nvj.temps_total
+    SELECT v.id_video, v.nom_video, CURDATE() AS date_jour, nvj.nb_jouer, nvj.temps_total
     FROM videos v
     JOIN nb_video_jour nvj ON v.id_video = nvj.id_video
     WHERE nvj.date_jour = CURDATE()
