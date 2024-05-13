@@ -164,6 +164,29 @@ def get_stats():
     
     return jsonify({"success": True, "stats": stats}), 200
 
+@app.route('/get-videos/<int:objet_id>', methods=['GET'])
+def get_videos(objet_id):
+    try:
+        conn_cloud = creer_connexion_cloud()
+        if not conn_cloud:
+            return jsonify({"success": False, "message": "Failed to connect to cloud database"}), 500
+        cloud_cursor = conn_cloud.cursor(dictionary=True)
+        
+        query = """
+            SELECT id_video, nom_video, taille_video, md5_video, ordre_video
+            FROM videos_objets WHERE id_objet = %s
+        """
+        cloud_cursor.execute(query, (objet_id,))
+        videos = cloud_cursor.fetchall()
+    except:
+        return jsonify({"success": False, "message": "Failed to fetch videos"}), 500
+    finally:
+        cloud_cursor.close()
+        conn_cloud.close()
+        
+    
+    return jsonify({"success": True, "videos": videos}), 200
+
 @app.route('/upload_video', methods=['POST'])
 def upload_video():
     video_file = request.files['video']
@@ -173,7 +196,6 @@ def upload_video():
     # Handle the video upload here, e.g., save the file to a cloud storage
     
     return jsonify({"success": True}), 200
-    
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

@@ -1,43 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Device Dashboard</title>
-  <link rel="stylesheet" href="/static/styles.css" />
-  <script defer src="/static/index.js"></script>
-</head>
-
-<body>
-
-  <header>
-    <h1>Dashboard Objets</h1>
-    <div class="clock" id="clock"></div>
-  </header>
-  <main>
-    <h2>Les objets connectés</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Nom</th>
-          <th>Location</th>
-          <th>Statut</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="data-rows"></tbody>
-    </table>
-    <h2>Uploader une vidéo</h2>
-    <div>
-      <input type="file" id="video-upload" accept="video/*">
-      <button onclick="uploadVideo()">Uploader</button>
-    </div>
-  </main>
-  <footer>
-    <p>© 420-6GP-BB OBJETS CONNECTÉS</p>
-  </footer>
-</body>
-
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Device Dashboard</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <script defer src="/static/index.js"></script>
+  </head>
+  <body>
+    <header>
+      <h1>Dashboard Objets</h1>
+      <div class="clock" id="clock"></div>
+    </header>
+    <main>
+      <h2>Les objets connectés</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nom</th>
+            <th>Location</th>
+            <th>Statut</th>
+            <th>Nb Joué Total</th>
+            <th>Temps Joué Total</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="data-rows"></tbody>
+      </table>
+      <h2>Videos</h2>
+      <ul id="videos-list"></ul>
+      <h2>Uploader une vidéo</h2>
+      <div>
+        <input type="file" id="video-upload" accept="video/*" />
+        <button onclick="uploadVideo()">Uploader</button>
+      </div>
+    </main>
+    <footer>
+      <p>© 420-6GP-BB OBJETS CONNECTÉS</p>
+    </footer>
+  </body>
 </html>
