@@ -113,7 +113,7 @@ def run_data_collection():
         
         load_and_send_buffered_data()
         
-        time.sleep(60)
+        time.sleep(20)
 
 def download_video(video_url, video_path):
     try:

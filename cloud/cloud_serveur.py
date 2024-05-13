@@ -195,6 +195,7 @@ def upload_video():
         return jsonify({"success": False, "message": "No video uploaded"}), 400
 
     filename = secure_filename(video.filename)
+    save_video_in_database(filename)
     save_path = os.path.join(VIDEO_DIR, filename)
 
     with open(save_path, "wb") as f:
@@ -206,6 +207,18 @@ def upload_video():
             f.write(chunk)
 
     return jsonify({'success': True, 'message': 'Video uploaded successfully!', 'path': save_path}), 200
+
+def save_video_in_database(nom_video):
+    try:
+        conn_cloud = creer_connexion_cloud()
+        cursor = conn_cloud.cursor()
+        cursor.execute("INSERT INTO videos (nom_video) VALUES (%s)", (nom_video,))
+        conn_cloud.commit()
+        cursor.close()
+        conn_cloud.close()
+        return True
+    except:
+        return False
 
 
 if __name__ == "__main__":
