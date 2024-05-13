@@ -13,7 +13,8 @@ BUFFER_FILE = 'data_buffer.json'
 ID_OBJET = 2
 NOM_OBJET = 'RaspberryPi-Raed'
 LOCALISATION = 'Montreal'
-VIDEO_DIR = '../raspberrypi/videos'
+#VIDEO_DIR = '../raspberrypi/videos'
+VIDEO_DIR = '/Users/raed/Developpement Projects/School/Hiver 2024/Objets-Connecter/tp1-6GP/raspberrypi/videos'
 
 def fetch_videos_jouees():
     try:
