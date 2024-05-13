@@ -60,6 +60,7 @@ def get_videos_for_object(id_objet):
 # Synchroniser les données avec la base de données cloud, puis retourner les vidéos pour l'objet spécifié
 def synchronize_data(data):
     success = synchroniser_donnees_cloud_avec_locale(data)
+    print("success: ", success)
     if success:
         try:
             response_data = get_videos_for_object(data['objet'])
