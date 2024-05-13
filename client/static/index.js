@@ -128,3 +128,33 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   };
 });
+
+function uploadVideo() {
+  const fileInput = document.getElementById("video-upload");
+  const file = fileInput.files[0];
+
+  if (!file) {
+    alert("Veuillez sélectionner un fichier.");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("video", file);
+
+  fetch("http://4.206.210.212:5000/upload_video", {
+    method: "POST",
+    body: formData,
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        alert("Vidéo uploadée avec succès.");
+      } else {
+        alert("Erreur lors de l'upload de la vidéo.");
+      }
+    })
+    .catch((error) => {
+      console.error("Erreur lors de l'upload de la vidéo:", error);
+      alert("Une erreur est survenue lors de l'upload de la vidéo.");
+    });
+}

@@ -187,5 +187,15 @@ def get_videos(objet_id):
     
     return jsonify({"success": True, "videos": videos}), 200
 
+@app.route('/upload_video', methods=['POST'])
+def upload_video():
+    video_file = request.files['video']
+    if not video_file:
+        return jsonify({"success": False, "message": "No video file provided"}), 400
+    
+    # Handle the video upload here, e.g., save the file to a cloud storage
+    
+    return jsonify({"success": True}), 200
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
