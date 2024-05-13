@@ -118,9 +118,10 @@ def envoyer_commande_objet(id_objet, command):
         result = cursor.fetchone()
         cursor.close()
         conn_cloud.close()
-        
+        print("result: ", result)   
         if result:
             pi_url = f"http://{result[0]}:5000/execute_command"
+            print("pi_url: ", pi_url)
             response = requests.post(pi_url, json={"command": command}, timeout=10)
             response.raise_for_status()
             print(f"Command '{command}' sent to Raspberry Pi {id_objet}: {response.json()}")
