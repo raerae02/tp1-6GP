@@ -6,12 +6,12 @@ from flask_cors import CORS as cors
 import os
 
 
+
 app = Flask(__name__)
 cors(app)
 
 
 VIDEO_DIR = '/home/admis/tp1-6GP/raspberrypi/videos'
-RASPBERRY_PI_URL = '65.38.94.170:5000'
 
 def fetch_object_details(id_objet):
     connection = creer_connexion_cloud()
@@ -108,17 +108,26 @@ def servir_videos(video_name):
     else:
         return jsonify({"success": False, "message": "Video file not found"}), 404
 
+# Envoyer la commande à l'objet spécifié
 def envoyer_commande_objet(id_objet, command):
     try:
-        pi_url = f"{RASPBERRY_PI_URL}/execute_command"
-        response = requests.post(pi_url, json={"command": command}, timeout=10)
-        response.raise_for_status()
-        print(f"Command '{command}' sent to Raspberry Pi {id_objet}: {response.json()}")
-        return response.json()
+        conn_cloud = creer_connexion_cloud()
+        cursor = conn_cloud.cursor()
+        cursor.execute("SELECT OBJECT_IP FROM objets WHERE id_objet = %s", (id_objet,))
+        result = cursor.fetchone()
+        cursor.close()
+        conn_cloud.close()
+        if result:
+            pi_url = f"http://{result[0]}:5000/execute_command"
+            response = requests.post(pi_url, json={"command": command}, timeout=10)
+            response.raise_for_status()
+            print(f"Command '{command}' sent to Raspberry Pi {id_objet}: {response.json()}")
+            return response.json()
     except requests.exceptions.RequestException as e:
         print(f"Failed to send command '{command}' to Raspberry Pi {id_objet}: {e}")
         return {"success": False}
 
+# Envoyer la commande à l'objet spécifié
 @app.route('/send_command/<int:id_objet>', methods=['POST'])
 def send_command(id_objet):
     command = request.json.get('command')

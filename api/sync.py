@@ -4,7 +4,8 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-nom_objet = os.getenv('NOM_OBJET')
+NOM_OBJET = os.getenv('NOM_OBJET')
+RASPBERRY_PI_URL = os.getenv('RASPBERRY_PI_URL')
 
 # Synchroniser les données de la base de données cloud avec les données de la base de données locale
 def synchroniser_donnees_cloud_avec_locale(data):
@@ -26,11 +27,16 @@ def synchroniser_donnees_cloud_avec_locale(data):
         if not objet_existe:
             # Inserer l'objet si il n'existe pas
             cloud_cursor.execute("""
-                INSERT INTO objets (id_objet, nom_objet, local_objet, is_localisation)
-                VALUES (%s, %s, %s, %s)
-            """, (id_objet, nom_objet, 'Unknown', False))
+                INSERT INTO objets (id_objet, nom_objet, local_objet, is_localisation, objet_ip)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (id_objet, NOM_OBJET, 'Unknown', False, RASPBERRY_PI_URL))
             print("objet_existe: ", objet_existe)
-        
+        else:
+            # Mettre a jour l'adresse IP de l'objet
+            cloud_cursor.execute("""
+                UPDATE objets SET OBJECT_IP = %s WHERE id_objet = %s
+            """, (RASPBERRY_PI_URL, id_objet))
+            
         print("id_objet: ", id_objet)
             
         for video in data['videos']:

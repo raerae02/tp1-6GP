@@ -7,13 +7,16 @@ import hashlib
 from api.sync import synchroniser_donnees_locale_avec_cloud
 import os
 from dotenv import load_dotenv
+
+
 load_dotenv()
+
 # Configuration
-SERVER_URL = 'http://4.206.210.212:5000'
+
 BUFFER_FILE = 'data_buffer.json'
-ID_OBJET = 2
-NOM_OBJET = 'RaspberryPi-Raed'
-#VIDEO_DIR = '../raspberrypi/videos'
+
+SERVER_URL = os.getenv('SERVER_URL')
+ID_OBJET = os.getenv('ID_OBJET')
 VIDEO_DIR = os.getenv('VIDEO_DIR')
 
 def fetch_videos_jouees():

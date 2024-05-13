@@ -193,14 +193,3 @@ class ControleurVideos(tk.Tk):
         self.attributes("-topmost",False)
 
         self.iconify()
-
-
-@app.route('/call_python_function/<int:object_id>', methods=['GET'])
-def call_python_function():
-    # Call your Python function here using object_id
-    result = clignoter_led(3)
-    return result
-
-def your_python_function(object_id):
-    # Your Python function logic here
-    return f"Python function called with object_id: {object_id}"
