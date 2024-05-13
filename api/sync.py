@@ -1,5 +1,10 @@
 from api.database import creer_connexion_cloud, creer_connexion
 from datetime import datetime
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+nom_objet = os.getenv('NOM_OBJET')
 
 # Synchroniser les données de la base de données cloud avec les données de la base de données locale
 def synchroniser_donnees_cloud_avec_locale(data):
@@ -23,7 +28,7 @@ def synchroniser_donnees_cloud_avec_locale(data):
             cloud_cursor.execute("""
                 INSERT INTO objets (id_objet, nom_objet, local_objet, is_localisation)
                 VALUES (%s, %s, %s, %s)
-            """, (id_objet, 'Unknown', 'Unknown', False))
+            """, (id_objet, nom_objet, 'Unknown', False))
             print("objet_existe: ", objet_existe)
         
         print("id_objet: ", id_objet)

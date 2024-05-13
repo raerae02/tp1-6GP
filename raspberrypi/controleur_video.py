@@ -80,9 +80,9 @@ class ControleurVideos(tk.Tk):
     def clignoter_led(self, count):
         if count <= 0:
             return
-       # GPIO.output(ledPin, GPIO.HIGH)  # allumer l'LED
-       # self.after(500, lambda: GPIO.output(ledPin, GPIO.LOW))  # éteindre l'LED après 500ms
-        #self.after(1000, lambda: self.clignoter_led(count - 1))  # appeler la fonction récursive pour le clignotement suivant
+        GPIO.output(ledPin, GPIO.HIGH)  # allumer l'LED
+        self.after(500, lambda: GPIO.output(ledPin, GPIO.LOW))  # éteindre l'LED après 500ms
+        self.after(1000, lambda: self.clignoter_led(count - 1))  # appeler la fonction récursive pour le clignotement suivant
 
     def allumer_led(self):
         self.clignoter_led(3)  # clignoter l'LED trois fois
@@ -193,3 +193,14 @@ class ControleurVideos(tk.Tk):
         self.attributes("-topmost",False)
 
         self.iconify()
+
+
+@app.route('/call_python_function/<int:object_id>', methods=['GET'])
+def call_python_function():
+    # Call your Python function here using object_id
+    result = clignoter_led(3)
+    return result
+
+def your_python_function(object_id):
+    # Your Python function logic here
+    return f"Python function called with object_id: {object_id}"
