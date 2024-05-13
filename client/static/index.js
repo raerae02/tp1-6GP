@@ -4,8 +4,6 @@ document.addEventListener("DOMContentLoaded", function () {
   setInterval(updateClock, 1000);
 
   function updateClock() {
-    console.log("updateClock");
-
     const clockElement = document.getElementById("clock");
 
     if (clockElement) {
@@ -61,9 +59,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
   window.sendCommand = function (id_objet, command) {
-    console.log("sendCommand", id_objet, command);
-    console.log("sendCommand", id_objet, command);
-    console.log("sendCommand", id_objet, command);
     fetch(`http://4.206.210.212:5000/send_command/${id_objet}`, {
       method: "POST",
       headers: {
@@ -86,8 +81,5 @@ document.addEventListener("DOMContentLoaded", function () {
       .catch((error) => {
         console.log("Error sending command:", error);
       });
-    console.log("sendCommand", id_objet, command);
-    console.log("sendCommand", id_objet, command);
-    console.log("sendCommand", id_objet, command);
   };
 });

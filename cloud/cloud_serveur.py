@@ -137,6 +137,33 @@ def send_command(id_objet):
     response = envoyer_commande_objet(id_objet, command)
     return jsonify(response), 200 if response.get("success") else 500
 
+@app.route('/get-stats', methods=['GET'])
+def get_stats():
+    try:
+        conn_cloud = creer_connexion_cloud()
+        if not conn_cloud:
+            return jsonify({"success": False, "message": "Failed to connect to cloud database"}), 500
+        cloud_cursor = conn_cloud.cursor(dictionary=True)
+        
+        query = """
+            SELECT o.id_objet, o.nom_objet, o.local_objet, o.is_localisation, o.objet_ip,
+            SUM(vpj.nb_jouer) AS nb_jouer_total, SUM(vpj.temps_jouer) AS temps_total
+            FROM objets o
+            LEFT JOIN videos_par_jour vpj ON o.id_objet = vpj.id_objet
+            WHERE vpj.date_jour = CURDATE()
+            GROUP BY o.id_objet
+        """
+        cloud_cursor.execute(query)
+        stats = cloud_cursor.fetchall()
+    except:
+        return jsonify({"success": False, "message": "Failed to fetch stats"}), 500
+    finally:
+        cloud_cursor.close()
+        conn_cloud.close()
+        
+    
+    return jsonify({"success": True, "stats": stats}), 200
+    
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
