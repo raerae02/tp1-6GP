@@ -113,10 +113,11 @@ def envoyer_commande_objet(id_objet, command):
     try:
         conn_cloud = creer_connexion_cloud()
         cursor = conn_cloud.cursor()
-        cursor.execute("SELECT OBJECT_IP FROM objets WHERE id_objet = %s", (id_objet,))
+        cursor.execute("SELECT objet_ip FROM objets WHERE id_objet = %s", (id_objet,))
         result = cursor.fetchone()
         cursor.close()
         conn_cloud.close()
+        
         if result:
             pi_url = f"http://{result[0]}:5000/execute_command"
             response = requests.post(pi_url, json={"command": command}, timeout=10)

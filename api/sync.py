@@ -34,7 +34,7 @@ def synchroniser_donnees_cloud_avec_locale(data):
         else:
             # Mettre a jour l'adresse IP de l'objet
             cloud_cursor.execute("""
-                UPDATE objets SET OBJECT_IP = %s WHERE id_objet = %s
+                UPDATE objets SET objet_ip = %s WHERE id_objet = %s
             """, (RASPBERRY_PI_URL, id_objet))
             
         print("id_objet: ", id_objet)
