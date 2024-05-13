@@ -1,8 +1,7 @@
 import threading
+import time
 from raspberrypi.controleur_video import ControleurVideos
-import time
 from api.serveur import app
-import time
 from api.objet import run_data_collection
 
 
@@ -13,8 +12,6 @@ def run_api():
 
 
 if __name__ == "__main__":
-
-
     print("Initializing server...")
 
     api_thread = threading.Thread(target=run_api)

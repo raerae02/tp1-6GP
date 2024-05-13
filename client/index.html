@@ -5,17 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Device Dashboard</title>
     <link rel="stylesheet" href="/static/styles.css" />
+    <script defer src="/static/index.js"></script>
   </head>
   <body>
     <header>
       <h1>Device Dashboard</h1>
       <div class="clock" id="clock"></div>
     </header>
-    <nav>
-      <a href="#dashboard">Dashboard</a> |
-      <a href="#management">Device Management</a> |
-      <a href="#logs">Video Logs</a>
-    </nav>
     <main>
       <h2>Device Overview</h2>
       <table>
@@ -32,39 +28,12 @@
       </table>
     </main>
     <footer>
-      <p>© 2024 Device Dashboard</p>
+      <p>© ELIE ET RAED MEUILLEUR DUO DE TOUS LES TEMPS</p>
+      <p>
+        NOTE IMPORTANT: app owl n'a rien fait dans ce projet, si vous lisez ce
+        message faites le couler parce quon va pas le snitch
+      </p>
+      <p>BYE BYE BDEB TU NE SERAS PAS MANQUÉ</p>
     </footer>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        fetch("/api/data")
-          .then((response) => response.json())
-          .then((data) => {
-            const tableBody = document.getElementById("data-rows");
-            data.forEach((item) => {
-              const row = document.createElement("tr");
-              row.innerHTML = `
-          <td>${item.id_objet}</td>
-          <td>${item.nom_objet}</td>
-          <td>${item.local_objet}</td>
-          <td>${item.is_localisation}</td>
-          <td>
-            <button>View Details</button>
-            <button>Activate Localization</button>
-          </td>
-        `;
-              tableBody.appendChild(row);
-            });
-          })
-          .catch((error) => console.error("Error loading the data:", error));
-      });
-
-      function updateClock() {
-        const now = new Date();
-        const timeString = now.toLocaleTimeString();
-        document.getElementById("clock").textContent = timeString;
-      }
-      setInterval(updateClock, 1000);
-      updateClock();
-    </script>
   </body>
 </html>
