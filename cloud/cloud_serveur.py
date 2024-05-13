@@ -194,16 +194,19 @@ def upload_video():
     if not video:
         return jsonify({"success": False, "message": "No video uploaded"}), 400
 
-    file_content = video.stream.read(2048)  
-    video.stream.seek(0)  
-    mime_type = magic.from_buffer(file_content, mime=True)
-    if not mime_type.startswith('video/'):
-        return jsonify({"success": False, "message": "Invalid file type"}), 400
-
     filename = secure_filename(video.filename)
     save_path = os.path.join(VIDEO_DIR, filename)
-    video.save(save_path)
+
+    with open(save_path, "wb") as f:
+        chunk_size = 4096 
+        while True:
+            chunk = video.stream.read(chunk_size)
+            if not chunk:
+                break
+            f.write(chunk)
+
     return jsonify({'success': True, 'message': 'Video uploaded successfully!', 'path': save_path}), 200
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
