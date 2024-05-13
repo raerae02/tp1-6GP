@@ -77,27 +77,27 @@ document.addEventListener("DOMContentLoaded", function () {
     objects.forEach((object) => {
       const row = document.createElement("tr");
       row.innerHTML = `
-      <td>${object.id_objet}</td>
-      <td>${object.nom_objet}</td>
-      <td>${object.local_objet}</td>
-      <td>${object.is_localisation ? "Enabled" : "Disabled"}</td>
-      <td>${object.nb_jouer_total || 0}</td>
-      <td>${object.temps_total || 0} seconds</td>
-      <td>
-        <button onclick="sendCommand(${
-          object.id_objet
-        }, 'next_video')">Prochain video</button>
-        <button onclick="sendCommand(${
-          object.id_objet
-        }, 'stop_video')">Arreter videos</button>
-        <button onclick="sendCommand(${
-          object.id_objet
-        }, 'start_video')">Demarrer videos</button>
-        <button onclick="sendCommand(${
-          object.id_objet
-        }, 'localise')">Activer Localization</button>
-        <button onclick="fetchVideos(${object.id_objet})">Voir Videos</button>
-      </td>
+        <td>${object.id_objet}</td>
+        <td>${object.nom_objet}</td>
+        <td>${object.local_objet}</td>
+        <td>${object.is_localisation ? "Enabled" : "Disabled"}</td>
+        <td>${object.nb_jouer_total || 0}</td>
+        <td>${object.temps_total || 0} seconds</td>
+        <td>
+          <button onclick="sendCommand(${
+            object.id_objet
+          }, 'next_video')">Prochain video</button>
+          <button onclick="sendCommand(${
+            object.id_objet
+          }, 'stop_video')">Arreter videos</button>
+          <button onclick="sendCommand(${
+            object.id_objet
+          }, 'start_video')">Demarrer videos</button>
+          <button onclick="sendCommand(${
+            object.id_objet
+          }, 'localise')">Activer Localization</button>
+          <button onclick="fetchVideos(${object.id_objet})">Voir Videos</button>
+        </td>
       `;
       tableBody.appendChild(row);
     });

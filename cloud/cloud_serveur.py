@@ -146,7 +146,7 @@ def get_stats():
         cloud_cursor = conn_cloud.cursor(dictionary=True)
         
         query = """
-            SELECT o.id_objet, o.is_localisation,
+            SELECT o.id_objet, o.nom_objet, o.local_objet, o.is_localisation, o.objet_ip,
             SUM(vpj.nb_jouer) AS nb_jouer_total, SUM(vpj.temps_jouer) AS temps_total
             FROM objets o
             LEFT JOIN videos_par_jour vpj ON o.id_objet = vpj.id_objet
