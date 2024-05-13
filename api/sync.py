@@ -4,13 +4,16 @@ from datetime import datetime
 # Synchroniser les données de la base de données cloud avec les données de la base de données locale
 def synchroniser_donnees_cloud_avec_locale(data):
     try:
+        print("synchroniser les données cloud avec locale")
         conn_cloud = creer_connexion_cloud()
         if not conn_cloud :
             return False
+        print("conn_cloud: ", conn_cloud)
 
         cloud_cursor = conn_cloud.cursor()
 
         # Verifier si l'objet existe dans la base de données
+        print("data: ", data)
         id_objet = data['objet']
         cloud_cursor.execute("SELECT id_objet FROM objets WHERE id_objet = %s", (id_objet,))
         objet_existe = cloud_cursor.fetchone()
