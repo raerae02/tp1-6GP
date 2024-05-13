@@ -43,11 +43,46 @@ document.addEventListener("DOMContentLoaded", function () {
         <td>${object[1]}</td>
         <td>${object[2]}</td>
         <td>${object[3] ? "Enabled" : "Disabled"}</td>
-        <td><button onclick="enableLocalization(${
-          object[0]
-        })">Enable Localization</button></td>
+        <td>
+          <button onclick="sendCommand(${
+            object[0]
+          }, 'next_video')">Prochain video</button>
+          <button onclick="sendCommand(${
+            object[0]
+          }, 'stop_video')">Arreter videos</button>
+          <button onclick="sendCommand(${
+            object[0]
+          }, 'start_video')">Demarrer videos</button>
+          <button onclick="enableLocalization(${
+            object[0]
+          })">Activer Localization</button>
+        </td>
       `;
       tableBody.appendChild(row);
     });
   }
+  window.sendCommand = function (id_objet, command) {
+    fetch(`http://4.206.210.212:5000/send_command/${id_objet}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ command: command }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          console.log(
+            `Command '${command}' executed successfully for object ${id_objet}`
+          );
+        } else {
+          console.log(
+            `Failed to execute command '${command}' for object ${id_objet}`
+          );
+        }
+      })
+      .catch((error) => {
+        console.log("Error sending command:", error);
+      });
+  };
 });

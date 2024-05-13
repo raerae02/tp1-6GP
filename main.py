@@ -1,7 +1,7 @@
 import threading
 import time
 from raspberrypi.controleur_video import ControleurVideos
-from api.serveur import app
+from api.serveur import app, set_controller_instance
 from api.objet import run_data_collection
 
 
@@ -29,6 +29,8 @@ if __name__ == "__main__":
     time.sleep(2) 
 
     print("starting contoleur video")
-    app = ControleurVideos()
+    
+    controller_instance = ControleurVideos()
+    set_controller_instance(controller_instance)
 
-    app.mainloop()
+    controller_instance.mainloop()

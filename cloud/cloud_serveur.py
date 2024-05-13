@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify, send_from_directory
+import requests
 from api.sync import synchroniser_donnees_cloud_avec_locale
 from api.database import creer_connexion_cloud
 from flask_cors import CORS as cors
@@ -8,7 +9,9 @@ import os
 app = Flask(__name__)
 cors(app)
 
+
 VIDEO_DIR = '/home/admis/tp1-6GP/raspberrypi/videos'
+RASPBERRY_PI_URL = '65.38.94.170:5000'
 
 def fetch_object_details(id_objet):
     connection = creer_connexion_cloud()
@@ -104,6 +107,24 @@ def servir_videos(video_name):
         return send_from_directory(VIDEO_DIR, video_name)
     else:
         return jsonify({"success": False, "message": "Video file not found"}), 404
+
+def envoyer_commande_objet(id_objet, command):
+    try:
+        pi_url = f"{RASPBERRY_PI_URL}/execute_command"
+        response = requests.post(pi_url, json={"command": command}, timeout=10)
+        response.raise_for_status()
+        print(f"Command '{command}' sent to Raspberry Pi {id_objet}: {response.json()}")
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Failed to send command '{command}' to Raspberry Pi {id_objet}: {e}")
+        return {"success": False}
+
+@app.route('/send_command/<int:id_objet>', methods=['POST'])
+def send_command(id_objet):
+    command = request.json.get('command')
+    response = envoyer_commande_objet(id_objet, command)
+    return jsonify(response), 200 if response.get("success") else 500
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
