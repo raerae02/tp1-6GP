@@ -8,11 +8,12 @@ from api.sync import synchroniser_donnees_locale_avec_cloud
 
 
 # Configuration
-SERVER_URL = 'http://4.206.210.212:5000/'
+SERVER_URL = 'http://4.206.210.212:5000'
 BUFFER_FILE = 'data_buffer.json'
 ID_OBJET = 2
+NOM_OBJET = 'RaspberryPi-Raed'
 LOCALISATION = 'Montreal'
-VIDEO_DIR = './../raspberrypi/videos'
+VIDEO_DIR = '../raspberrypi/videos'
 
 def fetch_videos_jouees():
     try:
@@ -112,7 +113,7 @@ def download_video(video_url, video_path):
                 file.write(chunk)
         print(f"Telechargement: {video_path}")
     except requests.exceptions.RequestException as e:
-        print(f"Echec du telechargement de la video: {e}")
+        print(f"Echec de telechargement de la video: {e}")
 
 def calculate_md5(file_path):
     hash_md5 = hashlib.md5()

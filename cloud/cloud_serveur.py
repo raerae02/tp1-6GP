@@ -8,7 +8,7 @@ import os
 app = Flask(__name__)
 cors(app)
 
-VIDEO_DIR = './../raspberrypi/videos'
+VIDEO_DIR = '../raspberrypi/videos'
 
 def fetch_object_details(id_objet):
     connection = creer_connexion_cloud()
