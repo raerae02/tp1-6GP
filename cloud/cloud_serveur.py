@@ -4,7 +4,8 @@ from api.sync import synchroniser_donnees_cloud_avec_locale
 from api.database import creer_connexion_cloud
 from flask_cors import CORS as cors
 import os
-
+import magic
+from werkzeug.utils import secure_filename
 
 
 app = Flask(__name__)
@@ -189,13 +190,20 @@ def get_videos(objet_id):
 
 @app.route('/upload_video', methods=['POST'])
 def upload_video():
-    video_file = request.files['video']
-    if not video_file:
-        return jsonify({"success": False, "message": "No video file provided"}), 400
-    
-    # Handle the video upload here, e.g., save the file to a cloud storage
-    
-    return jsonify({"success": True}), 200
+    video = request.files['video']
+    if not video:
+        return jsonify({"success": False, "message": "No video uploaded"}), 400
+
+    file_content = video.stream.read(2048)  
+    video.stream.seek(0)  
+    mime_type = magic.from_buffer(file_content, mime=True)
+    if not mime_type.startswith('video/'):
+        return jsonify({"success": False, "message": "Invalid file type"}), 400
+
+    filename = secure_filename(video.filename)
+    save_path = os.path.join(VIDEO_DIR, filename)
+    video.save(save_path)
+    return jsonify({'success': True, 'message': 'Video uploaded successfully!', 'path': save_path}), 200
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
