@@ -80,8 +80,8 @@ def synchroniser_donnees_locale_avec_cloud(videos):
 
         for video in videos:
             if 'id_video' not in video or 'nom_video' not in video:
-                print(f"Missing necessary video information: {video}")
-                continue  # Skip this iteration if key data is missing
+                print(f"Manquant des informations pour la video: {video}")
+                continue  # Skip la video si elle ne contient pas les informations requises
 
             query = """
             INSERT INTO videos (id_video, nom_video, taille_video, md5_video, ordre)

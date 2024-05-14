@@ -192,12 +192,14 @@ def get_videos(objet_id):
 @app.route('/upload_video', methods=['POST'])
 def upload_video():
     video = request.files['video']
+    id_objet = request.form.get('id_objet')
+    
     if not video:
         return jsonify({"success": False, "message": "No video uploaded"}), 400
 
     filename = secure_filename(video.filename)
-    save_video_in_database(filename)
     save_path = os.path.join(VIDEO_DIR, filename)
+    
 
     with open(save_path, "wb") as f:
         chunk_size = 4096 
@@ -206,21 +208,30 @@ def upload_video():
             if not chunk:
                 break
             f.write(chunk)
+    
+    video_size = os.path.getsize(save_path)
+#    md5_checksum = calculate_md5(save_path)
+    save_video_in_database(filename, id_objet, video_size)
 
     return jsonify({'success': True, 'message': 'Video uploaded successfully!', 'path': save_path}), 200
 
-def save_video_in_database(nom_video):
+def save_video_in_database(nom_video, id_objet, video_size):
+    conn_cloud = creer_connexion_cloud()
+    cursor = conn_cloud.cursor()
     try:
-        conn_cloud = creer_connexion_cloud()
-        cursor = conn_cloud.cursor()
-        cursor.execute("INSERT INTO videos (nom_video) VALUES (%s)", (nom_video,))
+        
+        query = """
+        INSERT INTO videos_objets (id_objet, nom_video, taille_video, md5_video, ordre_video)
+        VALUES (%s, %s, %s, %s, %s)
+        """
+        cursor.execute(query, (id_objet, nom_video, video_size, '', 0))
         conn_cloud.commit()
+    except Exception as e:
+        print(f"Erreur lors de l'insertion de la video dans la base de donnees: {e}")
+        conn_cloud.rollback()
+    finally:
         cursor.close()
         conn_cloud.close()
-        return True
-    except:
-        return False
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

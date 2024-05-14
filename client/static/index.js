@@ -97,6 +97,9 @@ document.addEventListener("DOMContentLoaded", function () {
             object.id_objet
           }, 'localise')">Activer Localization</button>
           <button onclick="fetchVideos(${object.id_objet})">Voir Videos</button>
+          <button onClick="uploadVideo(${
+            object.id_objet
+          })">Telecharger Video</button>
         </td>
       `;
       tableBody.appendChild(row);
@@ -129,7 +132,7 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 });
 
-function uploadVideo() {
+window.uploadVideo = function (id_objet) {
   const fileInput = document.getElementById("video-upload");
   const file = fileInput.files[0];
 
@@ -140,6 +143,7 @@ function uploadVideo() {
 
   const formData = new FormData();
   formData.append("video", file);
+  formData.append("id_objet", id_objet);
 
   fetch("http://4.206.210.212:5000/upload_video", {
     method: "POST",
@@ -157,4 +161,4 @@ function uploadVideo() {
       console.error("Erreur lors de l'upload de la vidéo:", error);
       alert("Une erreur est survenue lors de l'upload de la vidéo.");
     });
-}
+};
