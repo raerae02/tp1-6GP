@@ -6,6 +6,7 @@ from flask_cors import CORS as cors
 import os
 import magic
 from werkzeug.utils import secure_filename
+import traceback
 
 
 app = Flask(__name__)
@@ -200,7 +201,6 @@ def upload_video():
     filename = secure_filename(video.filename)
     save_path = os.path.join(VIDEO_DIR, filename)
     
-
     with open(save_path, "wb") as f:
         chunk_size = 4096 
         while True:
@@ -216,18 +216,25 @@ def upload_video():
     return jsonify({'success': True, 'message': 'Video uploaded successfully!', 'path': save_path}), 200
 
 def save_video_in_database(nom_video, id_objet, video_size):
+    print("Saving video in database", nom_video, id_objet, video_size)
     conn_cloud = creer_connexion_cloud()
+    if not conn_cloud:
+        print("Failed to connect to cloud database")
+        return jsonify({"success": False, "message": "Failed to connect to cloud database"}), 500
     cursor = conn_cloud.cursor()
     try:
-        
         query = """
         INSERT INTO videos_objets (id_objet, nom_video, taille_video, md5_video, ordre_video)
         VALUES (%s, %s, %s, %s, %s)
         """
         cursor.execute(query, (id_objet, nom_video, video_size, '', 0))
         conn_cloud.commit()
+        print(f"Rows affected: {cursor.rowcount}")
+        if cursor.rowcount == 0:
+            print("No rows inserted, check if id_objet exists and is correct.")
     except Exception as e:
         print(f"Erreur lors de l'insertion de la video dans la base de donnees: {e}")
+        print(traceback.format_exc())  
         conn_cloud.rollback()
     finally:
         cursor.close()

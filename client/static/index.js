@@ -75,6 +75,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const tableBody = document.getElementById("data-rows");
     tableBody.innerHTML = "";
     objects.forEach((object) => {
+      const fileInputId = `video-upload-${object.id_objet}`;
       const row = document.createElement("tr");
       row.innerHTML = `
         <td>${object.id_objet}</td>
@@ -86,20 +87,12 @@ document.addEventListener("DOMContentLoaded", function () {
         <td>
           <button onclick="sendCommand(${
             object.id_objet
-          }, 'next_video')">Prochain video</button>
-          <button onclick="sendCommand(${
-            object.id_objet
-          }, 'stop_video')">Arreter videos</button>
-          <button onclick="sendCommand(${
-            object.id_objet
-          }, 'start_video')">Demarrer videos</button>
-          <button onclick="sendCommand(${
-            object.id_objet
           }, 'localise')">Activer Localization</button>
           <button onclick="fetchVideos(${object.id_objet})">Voir Videos</button>
-          <button onClick="uploadVideo(${
-            object.id_objet
-          })">Telecharger Video</button>
+          <input type="file" id="${fileInputId}" style="display: none;" accept="video/*" onchange="uploadVideo(${
+        object.id_objet
+      }, '${fileInputId}')">
+          <button onclick="document.getElementById('${fileInputId}').click()">Telecharger Video</button>
         </td>
       `;
       tableBody.appendChild(row);
@@ -132,8 +125,8 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 });
 
-window.uploadVideo = function (id_objet) {
-  const fileInput = document.getElementById("video-upload");
+window.uploadVideo = function (id_objet, inputId) {
+  const fileInput = document.getElementById(inputId);
   const file = fileInput.files[0];
 
   if (!file) {
@@ -153,6 +146,7 @@ window.uploadVideo = function (id_objet) {
     .then((data) => {
       if (data.success) {
         alert("Vidéo uploadée avec succès.");
+        fileInput.value = "";
       } else {
         alert("Erreur lors de l'upload de la vidéo.");
       }
