@@ -59,13 +59,13 @@ def get_videos_for_object(id_objet):
         **objet_details,
         "videos": video_details
     }
-    print("response_data: ", response_data)
+    print("response_data qui sera envoyer au serveur local: ", response_data)
     return response_data
 
 # Synchroniser les données avec la base de données cloud, puis retourner les vidéos pour l'objet spécifié
 def synchronize_data(data):
     success = synchroniser_donnees_cloud_avec_locale(data)
-    print("success: ", success)
+    print("Succes de la synchronisation: ", success)
     if success:
         try:
             response_data = get_videos_for_object(data['objet'])
@@ -75,10 +75,11 @@ def synchronize_data(data):
     else:
         return {"success": False}, 500
 
-# Synchroniser les données avec la base de données cloud
+# Endpoint pour la synchronisation des données
 @app.route('/synchronize', methods=['POST'])
 def synchronize():
     data = request.json
+    print("Data recu pour synchronisation: ", data)
     response_data, status_code = synchronize_data(data)
     return jsonify(response_data), status_code
 

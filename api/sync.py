@@ -13,7 +13,6 @@ def synchroniser_donnees_cloud_avec_locale(data):
         cloud_cursor = conn_cloud.cursor()
 
         # Verifier si l'objet existe dans la base de données
-        print("data: ", data)
         id_objet = data['objet']
         nom_objet = data['nom_objet']
         objet_ip = data['objet_ip']
@@ -33,12 +32,9 @@ def synchroniser_donnees_cloud_avec_locale(data):
                 UPDATE objets SET objet_ip = %s WHERE id_objet = %s
             """, (objet_ip, id_objet))
             
-        print("id_objet: ", id_objet)
-            
         for video in data['videos']:
             id_video = video['video']
             nom_video = video['nom_video']
-            print("nom_video: ", nom_video)
             date_str = video['date']
             date_jour = datetime.strptime(date_str, '%a, %d %b %Y %H:%M:%S %Z').strftime('%Y-%m-%d') # convertir la date en format 'YYYY-MM-DD'
             nb_jouer = video['nb']
