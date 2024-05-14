@@ -25,7 +25,7 @@ def synchroniser_donnees_cloud_avec_locale(data):
                 INSERT INTO objets (id_objet, nom_objet, local_objet, is_localisation, objet_ip)
                 VALUES (%s, %s, %s, %s, %s)
             """, (id_objet, nom_objet, 'New York', False, objet_ip))
-            print("objet_existe: ", objet_existe)
+            print("Objet ajouter dans la table objets", data)
         else:
             # Mettre a jour l'adresse IP de l'objet
             cloud_cursor.execute("""
@@ -50,6 +50,7 @@ def synchroniser_donnees_cloud_avec_locale(data):
                     INSERT INTO videos_objets (id_video, id_objet, nom_video, taille_video, md5_video, ordre_video)
                     VALUES (%s, %s, %s, %s, %s, %s)
                 """, (id_video, id_objet, nom_video, 0, '', 0))
+                print("Video ajouter dans la table videos_objets", video)
 
             # Inserer ou mettre a jour les statistiques de la video pour la journée
             query_cloud = """
@@ -58,6 +59,7 @@ def synchroniser_donnees_cloud_avec_locale(data):
             ON DUPLICATE KEY UPDATE nb_jouer = nb_jouer + VALUES(nb_jouer), temps_jouer = temps_jouer + VALUES(temps_jouer)
             """
             cloud_cursor.execute(query_cloud, (date_jour, id_video, id_objet, nb_jouer, temps_jouer))
+            print("video ajouter dans la table videos_par_jour", video)
 
         conn_cloud.commit()
         return True
