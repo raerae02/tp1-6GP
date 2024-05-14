@@ -69,7 +69,7 @@ def save_data_locally(data):
 def synchronize_videos(videos):
     for video in videos:
         video_path = os.path.join(VIDEO_DIR, video['nom_video'])
-        if not os.path.exists(video_path) or calculate_md5(video_path) != video['md5_video']:
+        if not os.path.exists(video_path): # or calculate_md5(video_path) != video['md5_video']:
             print(f"Video {video['nom_video']} missing or checksum mismatch. Downloading...")
             download_video(f"{SERVER_URL}/videos/{video['nom_video']}", video_path)
 

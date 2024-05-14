@@ -62,7 +62,7 @@ def synchroniser_donnees_cloud_avec_locale(data):
         conn_cloud.commit()
         return True
     except Exception as e:
-        print(f"Erreur lors de la synchronisation des données: {e}")
+        print(f"Erreur lors de la synchronisation des données cloud avec le local: {e}")
         return False
     finally:
         if cloud_cursor: cloud_cursor.close()
@@ -86,7 +86,7 @@ def synchroniser_donnees_locale_avec_cloud(videos):
             cursor.execute(query, (video['video'], video['nom'], video['taille'], video['md5'], video['ordre']))
         conn_locale.commit()
     except Exception as e:
-        print(f"Erreur lors de la synchronisation des données: {e}")
+        print(f"Erreur lors de la synchronisation des données locale sur le cloud: {e}")
         return False
     finally:
         if cursor: cursor.close()

@@ -61,9 +61,9 @@ class ControleurVideos(tk.Tk):
         self.text_4.grid(row=3, column=0, sticky='w', padx=10)
 
         # Boutons
-        self.boutons_locatisation = tk.Button(self, text="Localisation / Arrêt", command = self.allumer_led)
-        self.boutons_locatisation.grid(row=4, column=0, pady=(20, 5), padx=(20, 0))
-        self.boutons_locatisation.place(x=70, y=135)
+        #self.boutons_locatisation = tk.Button(self, text="Localisation / Arrêt", command = self.allumer_led)
+        # self.boutons_locatisation.grid(row=4, column=0, pady=(20, 5), padx=(20, 0))
+        # self.boutons_locatisation.place(x=70, y=135)
 
         self.boutons_suivant = tk.Button(self, text="Passer au vidéo suivant", command=self.jouer_prochaine_video)
         self.boutons_suivant.grid(row=5, column=0, pady=5, padx=(40, 0))
@@ -77,15 +77,15 @@ class ControleurVideos(tk.Tk):
         self.boutons_demarrer.grid(row=6, column=1, padx=(10, 60), pady=5)
         self.boutons_demarrer.place(x=175, y=205)
 
-    def clignoter_led(self, count):
-        if count <= 0:
-            return
-        GPIO.output(ledPin, GPIO.HIGH)  # allumer l'LED
-        self.after(500, lambda: GPIO.output(ledPin, GPIO.LOW))  # éteindre l'LED après 500ms
-        self.after(1000, lambda: self.clignoter_led(count - 1))  # appeler la fonction récursive pour le clignotement suivant
+    # def clignoter_led(self, count):
+    #     if count <= 0:
+    #         return
+    #     GPIO.output(ledPin, GPIO.HIGH)  # allumer l'LED
+    #     self.after(500, lambda: GPIO.output(ledPin, GPIO.LOW))  # éteindre l'LED après 500ms
+    #     self.after(1000, lambda: self.clignoter_led(count - 1))  # appeler la fonction récursive pour le clignotement suivant
 
-    def allumer_led(self):
-        self.clignoter_led(3)  # clignoter l'LED trois fois
+    # def allumer_led(self):
+    #     self.clignoter_led(3)  # clignoter l'LED trois fois
 
 
     def lister_videos(self, dossier):
@@ -186,7 +186,7 @@ class ControleurVideos(tk.Tk):
     
     def jouer_prochaine_video(self):
         if self.lecteur_video_actuel:
-            self.clignoter_led(3)
+            #self.clignoter_led(3)
             self.lecteur_video_actuel.passer_au_video_suivant()
 
     def minimiser_controleur(self):
