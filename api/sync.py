@@ -67,27 +67,37 @@ def synchroniser_donnees_cloud_avec_locale(data):
     finally:
         if cloud_cursor: cloud_cursor.close()
         if conn_cloud: conn_cloud.close()
-        
-# Synchroniser les données de la base de données locale avec les données de la base de données cloud
+       
 def synchroniser_donnees_locale_avec_cloud(videos):
+    conn_locale = None
+    cursor = None
     try:
         conn_locale = creer_connexion()
         if not conn_locale:
+            print("Failed to establish local database connection")
             return False
         cursor = conn_locale.cursor()
-        
+
         for video in videos:
+            if 'id_video' not in video or 'nom_video' not in video:
+                print(f"Missing necessary video information: {video}")
+                continue  # Skip this iteration if key data is missing
+
             query = """
             INSERT INTO videos (id_video, nom_video, taille_video, md5_video, ordre)
             VALUES (%s, %s, %s, %s, %s)
             ON DUPLICATE KEY UPDATE nom_video=VALUES(nom_video), taille_video=VALUES(taille_video),
             md5_video=VALUES(md5_video), ordre=VALUES(ordre)
             """
-            cursor.execute(query, (video['video'], video['nom'], video['taille'], video['md5'], video['ordre']))
+            cursor.execute(query, (video['id_video'], video['nom_video'], video['taille_video'], video['md5_video'], video['ordre_video']))
         conn_locale.commit()
+        print("Data synchronized successfully")
+        return True
     except Exception as e:
-        print(f"Erreur lors de la synchronisation des données locale sur le cloud: {e}")
+        print(f"Error while synchronizing local data with cloud: {e}")
         return False
     finally:
-        if cursor: cursor.close()
-        if conn_locale: conn_locale.close()
+        if cursor:
+            cursor.close()
+        if conn_locale:
+            conn_locale.close()
