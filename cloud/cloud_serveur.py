@@ -255,7 +255,8 @@ def clignoter_led(id_objet):
         print(f"Clignotement de la LED du Raspberry Pi {id_objet}hahahahahaha" )
         print(f"Clignotement de la LED du Raspberry Pi {id_objet}hahahahahaha" )
         
-        ControleurVideos.clignoter_led(id_objet, count)  # Clignoter la LED 3 fois
+        # ControleurVideos.clignoter_led(id_objet, count)  # Clignoter la LED 3 fois
+        ControleurVideos.allumer_led()
         return jsonify({"success": True, "message": "LED clignotée"})
     else:
         return jsonify({"success": False, "message": "Controller instance not set"}), 500
