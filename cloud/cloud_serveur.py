@@ -125,7 +125,7 @@ def envoyer_commande_objet(id_objet, command):
         conn_cloud.close()
         print("result: ", result)  
         if command == "localise":
-            clignoter_led(id_objet) 
+            clignoter_led(id_objet,3) 
         if result:
             pi_url = f"http://{result[0]}:5000/execute_command"
             print("pi_url: ", pi_url)
