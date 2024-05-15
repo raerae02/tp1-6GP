@@ -251,7 +251,7 @@ def save_video_in_database(nom_video, id_objet, video_size):
 @app.route('/clignoter_led/<int:id_objet>', methods=['POST'])
 def clignoter_led(id_objet):
     print ("Clignotement de la LED du Raspberry Pi", id_objet)
-    if controleur_videos:
+    if True:
         controleur_videos.clignoter_led(id_objet, count)  # Clignoter la LED 3 fois
         return jsonify({"success": True, "message": "LED clignotée"})
     else:
