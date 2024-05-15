@@ -82,15 +82,15 @@ class ControleurVideos(tk.Tk):
         self.boutons_demarrer.grid(row=6, column=1, padx=(10, 60), pady=5)
         self.boutons_demarrer.place(x=175, y=205)
 
-    def clignoter_led(self,id, count):
-        if count <= 0:
-            return
-        GPIO.output(ledPin, GPIO.HIGH)  # allumer l'LED
-        self.after(500, lambda: GPIO.output(ledPin, GPIO.LOW))  # éteindre l'LED après 500ms
-        self.after(1000, lambda: self.clignoter_led(count - 1))  # appeler la fonction récursive pour le clignotement suivant
+    # def clignoter_led(self,id, count):
+    #     if count <= 0:
+    #         return
+    #     # GPIO.output(ledPin, GPIO.HIGH)  # allumer l'LED
+    #     self.after(500, lambda: GPIO.output(ledPin, GPIO.LOW))  # éteindre l'LED après 500ms
+    #     self.after(1000, lambda: self.clignoter_led(count - 1))  # appeler la fonction récursive pour le clignotement suivant
 
-    def allumer_led(self):
-        self.clignoter_led(os.getenv('ID_OBJET'),3)  # clignoter l'LED trois fois
+    # def allumer_led(self):
+    #     self.clignoter_led(os.getenv('ID_OBJET'),3)  # clignoter l'LED trois fois
 
 
     def lister_videos(self, dossier):
