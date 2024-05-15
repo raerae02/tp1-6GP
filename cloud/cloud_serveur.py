@@ -131,7 +131,7 @@ def envoyer_commande_objet(id_objet, command):
             response.raise_for_status()
             print(f"Command '{command}' sent to Raspberry Pi {id_objet}: {response.json()}")
             if command == "localise":
-                 clignoter_led(id_objet)
+                clignoter_led(id_objet)
             return response.json()
         
     except requests.exceptions.RequestException as e:
@@ -248,7 +248,7 @@ def save_video_in_database(nom_video, id_objet, video_size):
 
 @app.route('/clignoter_led/<int:id_objet>', methods=['POST'])
 def clignoter_led(id_objet):
-    
+    print ("Clignotement de la LED du Raspberry Pi", id_objet)
     if ControleurVideos:
         print(f"Clignotement de la LED du Raspberry Pi {id_objet}hahahahahaha" )
         print(f"Clignotement de la LED du Raspberry Pi {id_objet}hahahahahaha" )
