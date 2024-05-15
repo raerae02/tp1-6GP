@@ -3,7 +3,7 @@ import os
 import requests
 from raspberrypi.affichage_date_heure import AffichageDateHeure
 from raspberrypi.lecteur_video import LecteurVideo
-#import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 import os
 from dotenv import load_dotenv
 
@@ -14,12 +14,12 @@ ledPin = 12
 sensorPin = 11    
 
 
-# def setup():
-#     GPIO.setmode(GPIO.BOARD)        # use PHYSICAL GPIO Numbering
-#     GPIO.setup(ledPin, GPIO.OUT)    # set ledPin to OUTPUT mode
-#     GPIO.setup(sensorPin, GPIO.IN)  # set sensorPin to INPUT mode
+def setup():
+    GPIO.setmode(GPIO.BOARD)        # use PHYSICAL GPIO Numbering
+    GPIO.setup(ledPin, GPIO.OUT)    # set ledPin to OUTPUT mode
+    GPIO.setup(sensorPin, GPIO.IN)  # set sensorPin to INPUT mode
 
-#setup()
+setup()
 
 class ControleurVideos(tk.Tk):
     def __init__(self):
@@ -41,7 +41,7 @@ class ControleurVideos(tk.Tk):
         self.mise_a_jour_ui_avec_stats(self.stats)
 
         self.after(30000, self.demarrer_videos)
-        # self.check_sensor_and_blink_led()
+        self.check_sensor_and_blink_led()
 
 
 
@@ -66,9 +66,9 @@ class ControleurVideos(tk.Tk):
         self.text_4.grid(row=3, column=0, sticky='w', padx=10)
 
         # Boutons
-        # self.boutons_locatisation = tk.Button(self, text="Localisation / Arrêt", command = self.allumer_led)
-        # self.boutons_locatisation.grid(row=4, column=0, pady=(20, 5), padx=(20, 0))
-        # self.boutons_locatisation.place(x=70, y=135)
+        self.boutons_locatisation = tk.Button(self, text="Localisation / Arrêt", command = self.allumer_led)
+        self.boutons_locatisation.grid(row=4, column=0, pady=(20, 5), padx=(20, 0))
+        self.boutons_locatisation.place(x=70, y=135)
 
         self.boutons_suivant = tk.Button(self, text="Passer au vidéo suivant", command=self.jouer_prochaine_video)
         self.boutons_suivant.grid(row=5, column=0, pady=5, padx=(40, 0))
@@ -82,15 +82,15 @@ class ControleurVideos(tk.Tk):
         self.boutons_demarrer.grid(row=6, column=1, padx=(10, 60), pady=5)
         self.boutons_demarrer.place(x=175, y=205)
 
-    # def clignoter_led(self,id, count):
-    #     if count <= 0:
-    #         return
-    #     # GPIO.output(ledPin, GPIO.HIGH)  # allumer l'LED
-    #     self.after(500, lambda: GPIO.output(ledPin, GPIO.LOW))  # éteindre l'LED après 500ms
-    #     self.after(1000, lambda: self.clignoter_led(count - 1))  # appeler la fonction récursive pour le clignotement suivant
+    def clignoter_led(self,id, count):
+        if count <= 0:
+            return
+        GPIO.output(ledPin, GPIO.HIGH)  # allumer l'LED
+        self.after(500, lambda: GPIO.output(ledPin, GPIO.LOW))  # éteindre l'LED après 500ms
+        self.after(1000, lambda: self.clignoter_led(count - 1))  # appeler la fonction récursive pour le clignotement suivant
 
-    # def allumer_led(self):
-    #     self.clignoter_led(os.getenv('ID_OBJET'),3)  # clignoter l'LED trois fois
+    def allumer_led(self):
+        self.clignoter_led(os.getenv('ID_OBJET'),3)  # clignoter l'LED trois fois
 
 
     def lister_videos(self, dossier):
@@ -119,16 +119,16 @@ class ControleurVideos(tk.Tk):
 
             # Si des vidéos sont disponibles, on les lit
             if videos:
-               # GPIO.output(ledPin, GPIO.HIGH)  # allumer l'LED
+                GPIO.output(ledPin, GPIO.HIGH)  # allumer l'LED
 
                 self.videos_en_lecture = True  
                 self.lecteur_video_actuel = LecteurVideo(self, videos)
                 self.lecteur_video_actuel.debuter_video_playback()
                 self.after(30000, self.minimiser_controleur)
-                # self.fenetre_date_heure.fermer_fenetre()
+                self.fenetre_date_heure.fermer_fenetre()
             # Sinon, on affiche un l'écran de date et heure
             else:
-              #  GPIO.output(ledPin, GPIO.LOW)  # eteindre l'LED
+                GPIO.output(ledPin, GPIO.LOW)  # eteindre l'LED
 
                 self.afficher_ecran_date_heure()
 
@@ -163,19 +163,19 @@ class ControleurVideos(tk.Tk):
             
         self.update_idletasks()
 
-    # def check_sensor_and_blink_led(self):
-    #     if GPIO.input(sensorPin) == GPIO.HIGH:
-    #         self.clignoter_led(3)
-    #         self.jouer_prochaine_video()
-    #     self.after(1000, self.check_sensor_and_blink_led)  # Vérifier chaque second
-    #     if self.videos_en_lecture:
-    #         GPIO.output(ledPin, GPIO.HIGH)  # allumer l'LED
-    #     else:
-    #         GPIO.output(ledPin, GPIO.LOW)  # eteindre l'LED
+    def check_sensor_and_blink_led(self):
+        if GPIO.input(sensorPin) == GPIO.HIGH:
+            self.clignoter_led(3)
+            self.jouer_prochaine_video()
+        self.after(1000, self.check_sensor_and_blink_led)  # Vérifier chaque second
+        if self.videos_en_lecture:
+            GPIO.output(ledPin, GPIO.HIGH)  # allumer l'LED
+        else:
+            GPIO.output(ledPin, GPIO.LOW)  # eteindre l'LED
 
     def arreter_videos(self):
         if self.lecteur_video_actuel:
-            #GPIO.output(ledPin, GPIO.LOW)  # éteindre l'LED
+            GPIO.output(ledPin, GPIO.LOW)  # éteindre l'LED
             print("Arrêt des vidéos.")
             self.lecteur_video_actuel.arreter_lecture()  
             self.lecteur_video_actuel = None
@@ -191,7 +191,7 @@ class ControleurVideos(tk.Tk):
     
     def jouer_prochaine_video(self):
         if self.lecteur_video_actuel:
-            #self.clignoter_led(3)
+            self.clignoter_led(3)
             self.lecteur_video_actuel.passer_au_video_suivant()
 
     def minimiser_controleur(self):
