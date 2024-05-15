@@ -156,7 +156,7 @@ window.uploadVideo = function (id_objet, inputId) {
 };
 
 function clignoterLed(id_objet, fois) {
-  fetch(`http://4.206.210.212:5000/clignoter_led/${fois}`, {
+  fetch(`http://4.206.210.212:5000/clignoter_led/${id_objet}`, {
       method: "POST",
       headers: {
           "Content-Type": "application/json",
