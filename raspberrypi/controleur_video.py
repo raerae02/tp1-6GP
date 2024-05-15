@@ -3,7 +3,7 @@ import os
 import requests
 from raspberrypi.affichage_date_heure import AffichageDateHeure
 from raspberrypi.lecteur_video import LecteurVideo
-import RPi.GPIO as GPIO
+# import RPi.GPIO as GPIO
 import os
 from dotenv import load_dotenv
 
