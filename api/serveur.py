@@ -1,5 +1,10 @@
 from flask import Flask, jsonify, request
 from api.database import creer_connexion
+import os
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -155,7 +160,7 @@ def execute_command():
     elif command == 'start_video' and controller_instance:
         controller_instance.demarrer_videos()
     elif command == 'localise' and controller_instance:
-        controller_instance.clignoter_led(3)
+        controller_instance.clignoter_led(os.getenv('ID_OBJET'),3)
     else:
         return jsonify({"success": False, "message": "Unknown command"}), 400
     return jsonify({"success": True, "message": f"Command '{command}' executed"}), 200

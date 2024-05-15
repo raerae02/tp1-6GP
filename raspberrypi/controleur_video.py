@@ -3,7 +3,7 @@ import os
 import requests
 from raspberrypi.affichage_date_heure import AffichageDateHeure
 from raspberrypi.lecteur_video import LecteurVideo
-# import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 import os
 from dotenv import load_dotenv
 
@@ -12,7 +12,13 @@ load_dotenv()
 
 import platform
 
-if platform.machine() == 'armv7l':  # Vérifie si la plateforme est un Raspberry Pi
+ledPin = 12
+sensorPin = 11    
+print(platform.machine())
+print(platform.machine())
+print(platform.machine())
+
+if platform.machine() == 'aarch64':  # Vérifie si la plateforme est un Raspberry Pi
     import RPi.GPIO as GPIO
     GPIO.setmode(GPIO.BOARD)
     GPIO.setup(ledPin, GPIO.OUT)    # set ledPin to OUTPUT mode
@@ -26,8 +32,7 @@ else:
 
 
 
-ledPin = 12
-sensorPin = 11    
+
 
 
 # def setup():
@@ -103,7 +108,7 @@ class ControleurVideos(tk.Tk):
             return
         GPIO.output(ledPin, GPIO.HIGH)  # allumer l'LED
         self.after(500, lambda: GPIO.output(ledPin, GPIO.LOW))  # éteindre l'LED après 500ms
-        self.after(1000, lambda: self.clignoter_led(count - 1))  # appeler la fonction récursive pour le clignotement suivant
+        self.after(1000, lambda: self.clignoter_led(os.getenv('ID_OBJET'),count - 1))  # appeler la fonction récursive pour le clignotement suivant
 
     def allumer_led(self):
         self.clignoter_led(os.getenv('ID_OBJET'),3)  # clignoter l'LED trois fois
@@ -181,7 +186,7 @@ class ControleurVideos(tk.Tk):
 
     def check_sensor_and_blink_led(self):
         if GPIO.input(sensorPin) == GPIO.HIGH:
-            self.clignoter_led(3)
+            self.clignoter_led(os.getenv('ID_OBJET'),3)
             self.jouer_prochaine_video()
         self.after(1000, self.check_sensor_and_blink_led)  # Vérifier chaque second
         if self.videos_en_lecture:
@@ -207,7 +212,7 @@ class ControleurVideos(tk.Tk):
     
     def jouer_prochaine_video(self):
         if self.lecteur_video_actuel:
-            self.clignoter_led(3)
+            self.clignoter_led(os.getenv('ID_OBJET'),3)
             self.lecteur_video_actuel.passer_au_video_suivant()
 
     def minimiser_controleur(self):
