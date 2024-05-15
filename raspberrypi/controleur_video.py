@@ -59,7 +59,11 @@ class ControleurVideos(tk.Tk):
             self.videos_en_lecture = False
             self.fenetre_date_heure = None
 
+            self.stats = self.obtenir_stats_jour()
+            self.creer_widgets()
+            self.mise_a_jour_ui_avec_stats(self.stats)
 
+            self.after(30000, self.demarrer_videos)
 
 
 
@@ -101,11 +105,12 @@ class ControleurVideos(tk.Tk):
         self.boutons_demarrer.place(x=175, y=205)
 
     def clignoter_led(self,id, count):
-        if count <= 0:
-            return
-        GPIO.output(ledPin, GPIO.HIGH)  # allumer l'LED
-        self.after(500, lambda: GPIO.output(ledPin, GPIO.LOW))  # éteindre l'LED après 500ms
-        self.after(1000, lambda: self.clignoter_led(os.getenv('ID_OBJET'),count - 1))  # appeler la fonction récursive pour le clignotement suivant
+        if platform.machine() == 'aarch64':    
+            if count <= 0:
+                return
+            GPIO.output(ledPin, GPIO.HIGH)  # allumer l'LED
+            self.after(500, lambda: GPIO.output(ledPin, GPIO.LOW))  # éteindre l'LED après 500ms
+            self.after(1000, lambda: self.clignoter_led(os.getenv('ID_OBJET'),count - 1))  # appeler la fonction récursive pour le clignotement suivant
 
     def allumer_led(self):
         self.clignoter_led(os.getenv('ID_OBJET'),3)  # clignoter l'LED trois fois
