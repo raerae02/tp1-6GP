@@ -27,7 +27,8 @@ def creer_connexion_cloud():
             host='4.206.210.212',
             user='root',
             password='FrhMakKha1234',
-            database='objets_bd'
+            database='objets_bd',
+            port=3306
         )
     except Error as e:
         print(f"Erreur lors de la connexion à la base de données: {e}")
