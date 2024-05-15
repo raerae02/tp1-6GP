@@ -243,7 +243,7 @@ def save_video_in_database(nom_video, id_objet, video_size):
         conn_cloud.close()
 
 
-    @app.route('/clignoter_led', methods=['POST'])
+    @app.route('/clignoter_led/<int:id_objet>', methods=['POST'])
     def clignoter_led():
         if ControleurVideos:
             ControleurVideos.clignoter_led(id_objet,3)  # Clignoter la LED 3 fois
