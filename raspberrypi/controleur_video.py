@@ -14,6 +14,8 @@ import platform
 
 if platform.machine() == 'armv7l':  # Vérifie si la plateforme est un Raspberry Pi
     import RPi.GPIO as GPIO
+    GPIO.setmode(GPIO.BOARD)
+
 else:
     GPIO = None  # Ou toute autre action appropriée pour votre cas
 
@@ -26,7 +28,7 @@ sensorPin = 11
 
 
 def setup():
-    GPIO.setmode(GPIO.BOARD)        # use PHYSICAL GPIO Numbering
+    # GPIO.setmode(GPIO.BOARD)        # use PHYSICAL GPIO Numbering
     GPIO.setup(ledPin, GPIO.OUT)    # set ledPin to OUTPUT mode
     GPIO.setup(sensorPin, GPIO.IN)  # set sensorPin to INPUT mode
 
