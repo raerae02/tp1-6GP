@@ -243,13 +243,13 @@ def save_video_in_database(nom_video, id_objet, video_size):
         conn_cloud.close()
 
 
-    @app.route('/clignoter_led/<int:id_objet>', methods=['POST'])
-    def clignoter_led():
-        if ControleurVideos:
-            ControleurVideos.clignoter_led(id_objet,3)  # Clignoter la LED 3 fois
-            return jsonify({"success": True, "message": "LED clignotée"})
-        else:
-            return jsonify({"success": False, "message": "Controller instance not set"}), 500
+@app.route('/clignoter_led/<int:id_objet>', methods=['POST'])
+def clignoter_led(id_objet):
+    if ControleurVideos:
+        ControleurVideos.clignoter_led(id_objet, 3)  # Clignoter la LED 3 fois
+        return jsonify({"success": True, "message": "LED clignotée"})
+    else:
+        return jsonify({"success": False, "message": "Controller instance not set"}), 500
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
