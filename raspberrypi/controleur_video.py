@@ -3,12 +3,23 @@ import os
 import requests
 from raspberrypi.affichage_date_heure import AffichageDateHeure
 from raspberrypi.lecteur_video import LecteurVideo
-import RPi.GPIO as GPIO
+# import RPi.GPIO as GPIO
 import os
 from dotenv import load_dotenv
 
 
 load_dotenv()
+
+import platform
+
+if platform.machine() == 'armv7l':  # Vérifie si la plateforme est un Raspberry Pi
+    import RPi.GPIO as GPIO
+else:
+    GPIO = None  # Ou toute autre action appropriée pour votre cas
+
+
+
+
 
 ledPin = 12
 sensorPin = 11    
