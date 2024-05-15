@@ -13,7 +13,8 @@ load_dotenv()
 import platform
 
 ledPin = 12
-sensorPin = 11    
+sensorPin = 11  
+count = 3   
 print(platform.machine())
 print(platform.machine())
 print(platform.machine())
@@ -62,7 +63,6 @@ class ControleurVideos(tk.Tk):
         self.mise_a_jour_ui_avec_stats(self.stats)
 
         self.after(30000, self.demarrer_videos)
-        self.check_sensor_and_blink_led()
 
 
 
@@ -140,7 +140,6 @@ class ControleurVideos(tk.Tk):
 
             # Si des vidéos sont disponibles, on les lit
             if videos:
-                GPIO.output(ledPin, GPIO.HIGH)  # allumer l'LED
 
                 self.videos_en_lecture = True  
                 self.lecteur_video_actuel = LecteurVideo(self, videos)
@@ -149,7 +148,6 @@ class ControleurVideos(tk.Tk):
                 self.fenetre_date_heure.fermer_fenetre()
             # Sinon, on affiche un l'écran de date et heure
             else:
-                GPIO.output(ledPin, GPIO.LOW)  # eteindre l'LED
 
                 self.afficher_ecran_date_heure()
 
@@ -184,19 +182,9 @@ class ControleurVideos(tk.Tk):
             
         self.update_idletasks()
 
-    def check_sensor_and_blink_led(self):
-        if GPIO.input(sensorPin) == GPIO.HIGH:
-            self.clignoter_led(os.getenv('ID_OBJET'),3)
-            self.jouer_prochaine_video()
-        self.after(1000, self.check_sensor_and_blink_led)  # Vérifier chaque second
-        if self.videos_en_lecture:
-            GPIO.output(ledPin, GPIO.HIGH)  # allumer l'LED
-        else:
-            GPIO.output(ledPin, GPIO.LOW)  # eteindre l'LED
 
     def arreter_videos(self):
         if self.lecteur_video_actuel:
-            GPIO.output(ledPin, GPIO.LOW)  # éteindre l'LED
             print("Arrêt des vidéos.")
             self.lecteur_video_actuel.arreter_lecture()  
             self.lecteur_video_actuel = None
@@ -212,7 +200,6 @@ class ControleurVideos(tk.Tk):
     
     def jouer_prochaine_video(self):
         if self.lecteur_video_actuel:
-            self.clignoter_led(os.getenv('ID_OBJET'),3)
             self.lecteur_video_actuel.passer_au_video_suivant()
 
     def minimiser_controleur(self):
