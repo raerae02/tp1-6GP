@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", function () {
         <td>${object.nb_jouer_total || 0}</td>
         <td>${object.temps_total || 0} seconds</td>
         <td>
-          <button onclick="clignoterLed(${object.id_objet}, 3))">Activer Localization</button>
+          <button onclick="clignoterLed(${object.id_objet}, 3)">Activer Localization</button>
           <button onclick="fetchVideos(${object.id_objet})">Voir Videos</button>
           <input type="file" id="${fileInputId}" style="display: none;" accept="video/*" onchange="uploadVideo(${
         object.id_objet
