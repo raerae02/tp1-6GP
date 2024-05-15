@@ -4,6 +4,11 @@ import requests
 from raspberrypi.affichage_date_heure import AffichageDateHeure
 from raspberrypi.lecteur_video import LecteurVideo
 #import RPi.GPIO as GPIO
+import os
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 ledPin = 12
 sensorPin = 11    
@@ -61,7 +66,7 @@ class ControleurVideos(tk.Tk):
         self.text_4.grid(row=3, column=0, sticky='w', padx=10)
 
         # Boutons
-        #self.boutons_locatisation = tk.Button(self, text="Localisation / Arrêt", command = self.allumer_led)
+        # self.boutons_locatisation = tk.Button(self, text="Localisation / Arrêt", command = self.allumer_led)
         # self.boutons_locatisation.grid(row=4, column=0, pady=(20, 5), padx=(20, 0))
         # self.boutons_locatisation.place(x=70, y=135)
 
@@ -77,15 +82,15 @@ class ControleurVideos(tk.Tk):
         self.boutons_demarrer.grid(row=6, column=1, padx=(10, 60), pady=5)
         self.boutons_demarrer.place(x=175, y=205)
 
-    # def clignoter_led(self, count):
-    #     if count <= 0:
-    #         return
-    #     GPIO.output(ledPin, GPIO.HIGH)  # allumer l'LED
-    #     self.after(500, lambda: GPIO.output(ledPin, GPIO.LOW))  # éteindre l'LED après 500ms
-    #     self.after(1000, lambda: self.clignoter_led(count - 1))  # appeler la fonction récursive pour le clignotement suivant
+    def clignoter_led(self,id, count):
+        if count <= 0:
+            return
+        GPIO.output(ledPin, GPIO.HIGH)  # allumer l'LED
+        self.after(500, lambda: GPIO.output(ledPin, GPIO.LOW))  # éteindre l'LED après 500ms
+        self.after(1000, lambda: self.clignoter_led(count - 1))  # appeler la fonction récursive pour le clignotement suivant
 
-    # def allumer_led(self):
-    #     self.clignoter_led(3)  # clignoter l'LED trois fois
+    def allumer_led(self):
+        self.clignoter_led(os.getenv('ID_OBJET'),3)  # clignoter l'LED trois fois
 
 
     def lister_videos(self, dossier):

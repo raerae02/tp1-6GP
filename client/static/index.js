@@ -85,9 +85,7 @@ document.addEventListener("DOMContentLoaded", function () {
         <td>${object.nb_jouer_total || 0}</td>
         <td>${object.temps_total || 0} seconds</td>
         <td>
-          <button onclick="sendCommand(${
-            object.id_objet
-          }, 'localise')">Activer Localization</button>
+          <button onclick="clignoterLed(${object.id_objet}, 3))">Activer Localization</button>
           <button onclick="fetchVideos(${object.id_objet})">Voir Videos</button>
           <input type="file" id="${fileInputId}" style="display: none;" accept="video/*" onchange="uploadVideo(${
         object.id_objet
@@ -156,3 +154,24 @@ window.uploadVideo = function (id_objet, inputId) {
       alert("Une erreur est survenue lors de l'upload de la vidéo.");
     });
 };
+
+function clignoterLed(id_objet, fois) {
+  fetch(`http://4.206.210.212:5000/clignoter_led/${fois}`, {
+      method: "POST",
+      headers: {
+          "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id_objet: id_objet }),
+  })
+  .then((response) => response.json())
+  .then((data) => {
+      if (data.success) {
+          console.log("LED clignotée avec succès");
+      } else {
+          console.log("Erreur lors du clignotement de la LED");
+      }
+  })
+  .catch((error) => {
+      console.log("Erreur lors du clignotement de la LED:", error);
+  });
+}

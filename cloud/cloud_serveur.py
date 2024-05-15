@@ -7,6 +7,8 @@ import os
 import magic
 from werkzeug.utils import secure_filename
 import traceback
+from raspberrypi.controleur_video import ControleurVideos
+
 
 
 app = Flask(__name__)
@@ -239,6 +241,15 @@ def save_video_in_database(nom_video, id_objet, video_size):
     finally:
         cursor.close()
         conn_cloud.close()
+
+
+@app.route('/clignoter_led', methods=['POST'])
+def clignoter_led():
+    if ControleurVideos:
+        ControleurVideos.clignoter_led(3)  # Clignoter la LED 3 fois
+        return jsonify({"success": True, "message": "LED clignotée"})
+    else:
+        return jsonify({"success": False, "message": "Controller instance not set"}), 500
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
