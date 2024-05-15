@@ -45,24 +45,21 @@ else:
 
 class ControleurVideos(tk.Tk):
     def __init__(self):
-        super().__init__()
-        self.title("Contrôleur de Vidéos")
-        self.geometry("600x300")
-        
-        self.nom_video_en_cours = tk.StringVar(value="Vidéo en cours : ")
-        self.nb_jouer_aujourdhui = tk.StringVar(value="Nombre joué aujourd'hui : ")
-        self.temps_jouer_aujourdhui = tk.StringVar(value="Temps joué aujourd'hui : ")
-        self.nb_total_videos_joues = tk.StringVar(value="Nombre total des vidéos jouées aujourd'hui : ")
-        
-        self.lecteur_video_actuel = None
-        self.videos_en_lecture = False
-        self.fenetre_date_heure = None
+        if platform.machine() == 'aarch64':     
+            super().__init__()
+            self.title("Contrôleur de Vidéos")
+            self.geometry("600x300")
+            
+            self.nom_video_en_cours = tk.StringVar(value="Vidéo en cours : ")
+            self.nb_jouer_aujourdhui = tk.StringVar(value="Nombre joué aujourd'hui : ")
+            self.temps_jouer_aujourdhui = tk.StringVar(value="Temps joué aujourd'hui : ")
+            self.nb_total_videos_joues = tk.StringVar(value="Nombre total des vidéos jouées aujourd'hui : ")
+            
+            self.lecteur_video_actuel = None
+            self.videos_en_lecture = False
+            self.fenetre_date_heure = None
 
-        self.stats = self.obtenir_stats_jour()
-        self.creer_widgets()
-        self.mise_a_jour_ui_avec_stats(self.stats)
 
-        self.after(30000, self.demarrer_videos)
 
 
 
