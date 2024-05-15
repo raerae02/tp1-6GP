@@ -14,7 +14,7 @@ from raspberrypi.controleur_video import ControleurVideos
 app = Flask(__name__)
 cors(app)
 
-
+count =3 
 VIDEO_DIR = '/home/admis/tp1-6GP/raspberrypi/videos'
 
 def fetch_object_details(id_objet):
