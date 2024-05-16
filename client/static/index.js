@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", function () {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          displayVideos(data.videos);
+          displayVideos(data.videos, id_objet);
         } else {
           console.log("Failed to fetch videos");
         }
@@ -61,20 +61,17 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   };
 
-  function displayVideos(videos) {
+  function displayVideos(videos, id_objet) {
     const videosList = document.getElementById("videos-list");
     videosList.innerHTML = "";
     videos.forEach((video) => {
       const listItem = document.createElement("li");
-
-      const textContent = document.createTextNode(
-        `Video ID: ${video.id_video}, Nom: ${video.nom_video}`
-      );
-      listItem.appendChild(textContent);
+      listItem.textContent = `Video ID: ${video.id_video}, Nom: ${video.nom_video}`;
 
       const deleteButton = document.createElement("button");
       deleteButton.textContent = "Supprimer";
-      deleteButton.onclick = () => supprimerVideo(video.id_video);
+      // Pass both id_video and id_objet when calling supprimerVideo
+      deleteButton.onclick = () => supprimerVideo(video.id_video, id_objet);
       listItem.appendChild(deleteButton);
 
       videosList.appendChild(listItem);
@@ -174,12 +171,15 @@ document.addEventListener("DOMContentLoaded", function () {
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({
+        id_objet: id_objet,
+      }),
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
           alert("Vidéo supprimée avec succès.");
-          fetchObjectsStatus();
+          fetchVideos(id_objet);
         } else {
           alert("Erreur lors de la suppression de la vidéo.");
         }

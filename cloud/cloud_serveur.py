@@ -244,6 +244,7 @@ def activer_localisation():
 
 @app.route("/supprimer-video/<int:id_video>", methods=['DELETE'])
 def supprimer_video(id_video):
+    id_objet = request.json.get('id_objet')
 
     conn_cloud = creer_connexion_cloud()
     if not conn_cloud:
@@ -251,27 +252,18 @@ def supprimer_video(id_video):
     cursor = conn_cloud.cursor()
     
     try:
-        query_trouver_objet = """
-        SELECT id_objet FROM videos_objets WHERE id_video = %s
-        """
-        cursor.execute(query_trouver_objet, (id_video,))
-        result = cursor.fetchone()
-        if not result:
-            return jsonify({"success": False, "message": "Video not found"}), 404
-        id_objet = result[0]   
-             
         query_supprimer_videos_par_jour = "DELETE FROM videos_par_jour WHERE id_video = %s"
         cursor.execute(query_supprimer_videos_par_jour, (id_video,))
         
         query_supprimer = """
         DELETE FROM videos_objets WHERE id_video = %s AND id_objet = %s
         """
-        conn_cloud.execute(query_supprimer, (id_video, id_objet))
+        cursor.execute(query_supprimer, (id_video, id_objet))
         
         query_traquer_suppression = """
         INSERT INTO videos_supprimes (id_video, id_objet) VALUES (%s, %s)
         """
-        conn_cloud.execute(query_traquer_suppression, (id_video, id_objet))
+        cursor.execute(query_traquer_suppression, (id_video, id_objet))
                        
         conn_cloud.commit()
         print(f"Rows affected - Supprimer video: {cursor.rowcount}")
