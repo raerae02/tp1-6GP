@@ -242,9 +242,11 @@ def activer_localisation():
     
     return jsonify({"success": True}), 200
 
-@app.route("/supprimer-video/<int:id_video>", methods=['DELETE'])
-def supprimer_video(id_video):
-    id_objet = request.json.get('id_objet')
+@app.route("/supprimer-video/<int:id_objet>/<int:id_video>", methods=['DELETE'])
+def supprimer_video(id_objet, id_video):
+    
+    if not id_objet or not id_video:
+        return jsonify({"success": False, "message": "Missing id_objet or id_video"}), 400
 
     conn_cloud = creer_connexion_cloud()
     if not conn_cloud:

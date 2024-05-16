@@ -166,14 +166,8 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   };
   window.supprimerVideo = function (id_video, id_objet) {
-    fetch(`http://4.206.210.212:5000/supprimer-video/${id_video}`, {
+    fetch(`http://4.206.210.212:5000/supprimer-video/${id_objet}/${id_video}`, {
       method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        id_objet: id_objet,
-      }),
     })
       .then((response) => response.json())
       .then((data) => {
