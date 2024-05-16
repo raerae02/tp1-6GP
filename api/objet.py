@@ -69,7 +69,6 @@ def save_data_locally(data):
 # Elle supprime les videos locales qui ne sont plus presentes dans le cloud
 # Si une video est manquante ou si le checksum est different, elle sera telechargee
 def synchronize_videos(videos):
-    fetch_and_delete_videos()
     for video in videos:
         video_path = os.path.join(VIDEO_DIR, video['nom_video'])
         if not os.path.exists(video_path): # or calculate_md5(video_path) != video['md5_video']:
@@ -112,6 +111,7 @@ def load_and_send_buffered_data():
 def run_data_collection():
     while True:
         print("Data collection cycle started.")
+        fetch_and_delete_videos
         data = collect_data()
 
         if not send_data_to_server(data):

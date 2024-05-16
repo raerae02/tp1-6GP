@@ -159,13 +159,28 @@ def set_localisation():
         controleur_videos.eteindre_led()
     return jsonify({"success": True}), 201
 
-app.route('/videos/<int:id_video>', methods=['DELETE'])
+@app.route('/videos/<int:id_video>', methods=['DELETE'])
 def supprimer_video(id_video):
     connection = creer_connexion()
     cursor = connection.cursor()
-    query = "DELETE FROM videos WHERE id_video = %s"
-    cursor.execute(query, (id_video,))
-    connection.commit()
-    cursor.close()
-    connection.close()
-    return jsonify({"success": True})
+
+    try:
+        query_delete_courant = "DELETE FROM video_courant WHERE id_video = %s"
+        cursor.execute(query_delete_courant, (id_video,))
+
+        query_delete_nb = "DELETE FROM nb_video_jour WHERE id_video = %s"
+        cursor.execute(query_delete_nb, (id_video,))
+
+        query_delete_video = "DELETE FROM videos WHERE id_video = %s"
+        cursor.execute(query_delete_video, (id_video,))
+
+        connection.commit()
+        return jsonify({"success": True})
+
+    except Exception as e:
+        connection.rollback()
+        return jsonify({"success": False, "error": str(e)}), 500
+
+    finally:
+        cursor.close()
+        connection.close()
