@@ -82,7 +82,7 @@ def send_data_to_server(data):
         print(f"Les donnees ont ete envoyer correctement: {response_data}")
         
         if response_data and 'is_localisation' in response_data:
-            activer_localisation(response_data['is_localisation'])
+            activer_localisation(response_data['objet'], response_data['is_localisation'])
         
         if response_data and 'videos' in response_data:
             synchronize_videos(response_data['videos'])
