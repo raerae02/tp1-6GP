@@ -259,11 +259,13 @@ def supprimer_video():
     try:
         query_fetch_nom_video = "SELECT nom_video FROM videos_objets WHERE id_video = %s"
         cursor.execute(query_fetch_nom_video, (id_video,))
-
-        nom_video = cursor.fetchone()
+        result = cursor.fetchone()
         
-        if not nom_video:
+        if not result:
             return jsonify({"success": False, "message": "Video not found"}), 404
+        
+        nom_video = result[0]
+        
         
         query_supprimer_videos_par_jour = "DELETE FROM videos_par_jour WHERE id_video = %s"
         cursor.execute(query_supprimer_videos_par_jour, (id_video,))
