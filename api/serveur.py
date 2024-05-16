@@ -1,9 +1,11 @@
 from flask import Flask, jsonify, request
 from api.database import creer_connexion
+from raspberrypi.controleur_video import ControleurVideos
 
 app = Flask(__name__)
 
 controller_instance = None
+controleur_videos = ControleurVideos()
 
 def set_controller_instance(instance):
     print("Setting controller instance")
@@ -152,7 +154,7 @@ def obtenir_videos_jouees():
 def set_localisation():
     data = request.json
     if data['localisation'] == 'yes':
-        controller_instance.clignoter_led(3)
+        controleur_videos.clignoter_led(3)
     else:
-        controller_instance.eteindre_led()
+        controleur_videos.eteindre_led()
     return jsonify({"success": True}), 201
