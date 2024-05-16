@@ -166,8 +166,15 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   };
   window.supprimerVideo = function (id_video, id_objet) {
-    fetch(`http://4.206.210.212:5000/supprimer-video/${id_objet}/${id_video}`, {
-      method: "DELETE",
+    fetch(`http://4.206.210.212:5000/supprimer-video`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id_video: id_video,
+        id_objet: id_objet,
+      }),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -175,7 +182,7 @@ document.addEventListener("DOMContentLoaded", function () {
           alert("Vidéo supprimée avec succès.");
           fetchVideos(id_objet);
         } else {
-          alert("Erreur lors de la suppression de la vidéo.");
+          alert("Erreur lors de la suppression de la vidéo: " + data.message);
         }
       })
       .catch((error) => {

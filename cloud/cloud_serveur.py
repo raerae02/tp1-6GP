@@ -242,8 +242,11 @@ def activer_localisation():
     
     return jsonify({"success": True}), 200
 
-@app.route("/supprimer-video/<int:id_objet>/<int:id_video>", methods=['DELETE'])
-def supprimer_video(id_objet, id_video):
+@app.route("/supprimer-video", methods=['POST'])
+def supprimer_video():
+    data = request.get_json()
+    id_video = data.get('id_video')
+    id_objet = data.get('id_objet')
     
     if not id_objet or not id_video:
         return jsonify({"success": False, "message": "Missing id_objet or id_video"}), 400
@@ -278,20 +281,6 @@ def supprimer_video(id_objet, id_video):
     
     return jsonify({"success": True}), 200
 
-@app.route("/get-deleted-videos", methods=['GET'])
-def get_deleted_videos():
-    conn_cloud = creer_connexion_cloud()
-    if not conn_cloud:
-        return jsonify({"success": False, "message": "Failed to connect to cloud database"}), 500
-    cursor = conn_cloud.cursor(dictionary=True)
-    
-    query = """
-    SELECT id_video, id_objet FROM videos_supprimes
-    """
-    cursor.execute(query)
-    deleted_videos = cursor.fetchall()
-    
-    return jsonify({"success": True, "deleted_videos": deleted_videos}), 200
 
 
 if __name__ == "__main__":
