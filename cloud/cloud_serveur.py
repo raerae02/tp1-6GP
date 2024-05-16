@@ -242,35 +242,48 @@ def activer_localisation():
     
     return jsonify({"success": True}), 200
 
-@app.route("/supprimer-video", methods=['DELETE'])
-def supprimer_video(id_video, id_objet):
-    
+@app.route("/supprimer-video/<int:id_video>", methods=['DELETE'])
+def supprimer_video(id_video):
     conn_cloud = creer_connexion_cloud()
     if not conn_cloud:
         return jsonify({"success": False, "message": "Failed to connect to cloud database"}), 500
+
     cursor = conn_cloud.cursor()
-    
     try:
+        query_trouver_objet = """
+        SELECT id_objet FROM videos_objets WHERE id_video = %s
+        """
+        cursor.execute(query_trouver_objet, (id_video,))
+        result = cursor.fetchone()
+        
+        if not result:
+            return jsonify({"success": False, "message": "Video not found"}), 404
+        
+        id_objet = result[0]
+
         query_supprimer = """
         DELETE FROM videos_objets WHERE id_video = %s AND id_objet = %s
         """
-        conn_cloud.execute(query_supprimer, (id_video, id_objet))
+        cursor.execute(query_supprimer, (id_video, id_objet))
         
         query_traquer_suppression = """
         INSERT INTO videos_supprimes (id_video, id_objet) VALUES (%s, %s)
         """
-        conn_cloud.execute(query_traquer_suppression, (id_video, id_objet))
+        cursor.execute(query_traquer_suppression, (id_video, id_objet))
                        
         conn_cloud.commit()
         print(f"Rows affected - Supprimer video: {cursor.rowcount}")
+        return jsonify({"success": True, "message": "Video successfully deleted"}), 200
+
     except Exception as e:
         print(f"Erreur lors de la suppression de la video: {e}")
         conn_cloud.rollback()
+        return jsonify({"success": False, "message": str(e)}), 500
+
     finally:
         cursor.close()
         conn_cloud.close()
-    
-    return jsonify({"success": True}), 200
+
 
 @app.route("/get-deleted-videos", methods=['GET'])
 def get_deleted_videos():

@@ -168,9 +168,12 @@ document.addEventListener("DOMContentLoaded", function () {
         alert("Une erreur est survenue lors de l'upload de la vidéo.");
       });
   };
-  window.supprimerVideo = function (id_video) {
-    fetch(`http://4.206.210.212:5000/delete-video/${id_video}`, {
+  window.supprimerVideo = function (id_video, id_objet) {
+    fetch(`http://4.206.210.212:5000/supprimer-video/${id_video}`, {
       method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
     })
       .then((response) => response.json())
       .then((data) => {
