@@ -180,7 +180,7 @@ def delete_local_video(nom_video):
         
 def delete_videos_from_database(id_video):
     try:
-        response = requests.delete("http://localhost:5000/video/{id_video}")
+        response = requests.delete(f"http://localhost:5000/video/{id_video}")
         response.raise_for_status()
         print(f"Deleted video {id_video} from database.")
     except requests.exceptions.RequestException as e:

@@ -157,7 +157,7 @@ def set_localisation():
         controller_instance.clignoter_led(3)
     return jsonify({"success": True}), 201
 
-@app.route('/videos/<int:id_video>', methods=['DELETE'])
+@app.route('/video/<int:id_video>', methods=['DELETE'])
 def supprimer_video(id_video):
     connection = creer_connexion()
     cursor = connection.cursor()

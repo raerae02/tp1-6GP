@@ -36,7 +36,7 @@ class ControleurVideos(tk.Tk):
         self.mise_a_jour_ui_avec_stats(self.stats)
 
         self.after(30000, self.demarrer_videos)
-        # self.check_sensor_and_blink_led()
+        self.check_sensor_and_blink_led()
 
 
 
