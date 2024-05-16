@@ -66,17 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
     videosList.innerHTML = "";
     videos.forEach((video) => {
       const listItem = document.createElement("li");
-
-      const textContent = document.createTextNode(
-        `Video ID: ${video.id_video}, Nom: ${video.nom_video}`
-      );
-      listItem.appendChild(textContent);
-
-      const deleteButton = document.createElement("button");
-      deleteButton.textContent = "Supprimer";
-      deleteButton.onclick = () => supprimerVideo(video.id_video);
-      listItem.appendChild(deleteButton);
-
+      listItem.textContent = `Video ID: ${video.id_video}, Nom: ${video.nom_video}`;
       videosList.appendChild(listItem);
     });
   }
@@ -95,9 +85,7 @@ document.addEventListener("DOMContentLoaded", function () {
         <td>${object.nb_jouer_total || 0}</td>
         <td>${object.temps_total || 0} seconds</td>
         <td>
-        <button onclick="activerLocalisation(${object.id_objet}, ${
-        object.is_localisation ? 0 : 1
-      })">Toggle Localisation</button>
+          <button onclick="clignoterLed(${object.id_objet}, 3)">Activer Localization</button>
           <button onclick="fetchVideos(${object.id_objet})">Voir Videos</button>
           <input type="file" id="${fileInputId}" style="display: none;" accept="video/*" onchange="uploadVideo(${
         object.id_objet
@@ -109,81 +97,100 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  window.activerLocalisation = function (id_objet, localisation) {
-    fetch(`http://4.206.210.212:5000/activate-localisation`, {
+  window.sendCommand = function (id_objet, command) {
+    fetch(`http://4.206.210.212:5000/send_command/${id_objet}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        id_objet: id_objet,
-        localisation: localisation,
-      }),
+      body: JSON.stringify({ command: command }),
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          alert(
-            `Localisation ${
-              localisation ? "activated" : "deactivated"
-            } successfully.`
+          console.log(
+            `Command '${command}' executed successfully for object ${id_objet}`
           );
         } else {
-          alert("Error: " + data.message);
+          console.log(
+            `Failed to execute command '${command}' for object ${id_objet}`
+          );
         }
       })
       .catch((error) => {
-        console.error("Error activating localisation:", error);
-        alert("An error occurred while activating localisation.");
-      });
-  };
-  window.uploadVideo = function (id_objet, inputId) {
-    const fileInput = document.getElementById(inputId);
-    const file = fileInput.files[0];
-
-    if (!file) {
-      alert("Veuillez sélectionner un fichier.");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("video", file);
-    formData.append("id_objet", id_objet);
-
-    fetch("http://4.206.210.212:5000/upload_video", {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          alert("Vidéo téléchargée avec succès.");
-          fileInput.value = "";
-        } else {
-          alert("Erreur lors de l'upload de la vidéo.");
-        }
-      })
-      .catch((error) => {
-        console.error("Erreur lors de l'upload de la vidéo:", error);
-        alert("Une erreur est survenue lors de l'upload de la vidéo.");
-      });
-  };
-  window.supprimerVideo = function (id_video) {
-    fetch(`http://4.206.210.212:5000/delete-video/${id_video}`, {
-      method: "DELETE",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          alert("Vidéo supprimée avec succès.");
-          fetchObjectsStatus();
-        } else {
-          alert("Erreur lors de la suppression de la vidéo.");
-        }
-      })
-      .catch((error) => {
-        console.error("Erreur lors de la suppression de la vidéo:", error);
-        alert("Une erreur est survenue lors de la suppression de la vidéo.");
+        console.log("Error sending command:", error);
       });
   };
 });
+
+window.uploadVideo = function (id_objet, inputId) {
+  const fileInput = document.getElementById(inputId);
+  const file = fileInput.files[0];
+
+  if (!file) {
+    alert("Veuillez sélectionner un fichier.");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("video", file);
+  formData.append("id_objet", id_objet);
+
+  fetch("http://4.206.210.212:5000/upload_video", {
+    method: "POST",
+    body: formData,
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        alert("Vidéo uploadée avec succès.");
+        fileInput.value = "";
+      } else {
+        alert("Erreur lors de l'upload de la vidéo.");
+      }
+    })
+    .catch((error) => {
+      console.error("Erreur lors de l'upload de la vidéo:", error);
+      alert("Une erreur est survenue lors de l'upload de la vidéo.");
+    });
+};
+
+function clignoterLed(id_objet, fois) {
+  fetch(`http://4.206.210.212:5000/clignoter_led/${id_objet}`, {
+      method: "POST",
+      headers: {
+          "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id_objet: id_objet }),
+  })
+  .then((response) => response.json())
+  .then((data) => {
+      if (data.success) {
+          console.log("LED clignotée avec succès");
+      } else {
+          console.log("Erreur lors du clignotement de la LED");
+      }
+  })
+  .catch((error) => {
+      console.log("Erreur lors du clignotement de la LED:", error);
+  });
+}
+
+function supprimerVideo(id_video) {
+  fetch(`http://4.206.210.212:5000/supprimer-video/${id_video}`, {
+    method: "DELETE",
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        alert("Vidéo supprimée avec succès");
+        fetchObjectsStatus();
+      } else {
+        alert("Erreur lors de la suppression de la vidéo");
+      }
+    })
+    .catch((error) => {
+      console.error("Erreur lors de la suppression de la vidéo:", error);
+      alert("Une erreur est survenue lors de la suppression de la vidéo");
+    });
+}
