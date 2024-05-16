@@ -29,6 +29,7 @@ CREATE TABLE videos_par_jour (
 CREATE TABLE videos_supprimes (
     id_video INT,
     id_objet INT,
+    nom_video VARCHAR(255),
     temps_suppression TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id_video)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

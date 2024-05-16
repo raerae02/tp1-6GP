@@ -257,6 +257,12 @@ def supprimer_video():
     cursor = conn_cloud.cursor()
     
     try:
+        query_fetch_nom_video = "SELECT nom_video FROM videos_objets WHERE id_video = %s"
+        cursor.execute(query_fetch_nom_video, (id_video,))
+        if not nom_video:
+            return jsonify({"success": False, "message": "Video not found"}), 404
+        nom_video = cursor.fetchone()
+        
         query_supprimer_videos_par_jour = "DELETE FROM videos_par_jour WHERE id_video = %s"
         cursor.execute(query_supprimer_videos_par_jour, (id_video,))
         
@@ -266,9 +272,9 @@ def supprimer_video():
         cursor.execute(query_supprimer, (id_video, id_objet))
         
         query_traquer_suppression = """
-        INSERT INTO videos_supprimes (id_video, id_objet) VALUES (%s, %s)
+        INSERT INTO videos_supprimes (id_video, id_objet, nom_video) VALUES (%s, %s, %s)
         """
-        cursor.execute(query_traquer_suppression, (id_video, id_objet))
+        cursor.execute(query_traquer_suppression, (id_video, id_objet, nom_video))
                        
         conn_cloud.commit()
         print(f"Rows affected - Supprimer video: {cursor.rowcount}")
@@ -289,7 +295,7 @@ def get_deleted_videos():
     cursor = conn_cloud.cursor(dictionary=True)
     
     query = """
-    SELECT id_video, id_objet FROM videos_supprimes
+    SELECT id_video, id_objet, nom_video FROM videos_supprimes
     """
     cursor.execute(query)
     deleted_videos = cursor.fetchall()

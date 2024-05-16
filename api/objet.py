@@ -111,7 +111,7 @@ def load_and_send_buffered_data():
 def run_data_collection():
     while True:
         print("Data collection cycle started.")
-        fetch_and_delete_videos
+        fetch_and_delete_videos()
         data = collect_data()
 
         if not send_data_to_server(data):
