@@ -155,13 +155,16 @@ def activer_localisation(id_objet, is_localisation):
     except requests.exceptions.RequestException as e:
         print(f"Erreur lors de l'activation de la localisation: {e}")
         
-def fetch_and_delete_videos():
+def  fetch_and_delete_videos():
+    print("Fetching and deleting videos...")
     response = requests.get(f"{SERVER_URL}/get-deleted-videos")
     if response.status_code == 200:
+        print("Fetched deleted videos.")
         data = response.json()
         deleted_videos = data['deleted_videos']
         for video in deleted_videos:
             if video['id_objet'] == ID_OBJET:
+                print(f"Deleting video {video['id_video']}...")
                 delete_local_video(video['id_video'])
                 delete_videos_from_database(video['id_video'])
                 print(f"Deleted video {video['id_video']} locally.")

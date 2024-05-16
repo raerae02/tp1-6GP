@@ -281,7 +281,20 @@ def supprimer_video():
     
     return jsonify({"success": True}), 200
 
-
+@app.route("/get-deleted-videos", methods=['GET'])
+def get_deleted_videos():
+    conn_cloud = creer_connexion_cloud()
+    if not conn_cloud:
+        return jsonify({"success": False, "message": "Failed to connect to cloud database"}), 500
+    cursor = conn_cloud.cursor(dictionary=True)
+    
+    query = """
+    SELECT id_video, id_objet FROM videos_supprimes
+    """
+    cursor.execute(query)
+    deleted_videos = cursor.fetchall()
+    
+    return jsonify({"success": True, "deleted_videos": deleted_videos}), 200
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

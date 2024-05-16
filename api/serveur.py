@@ -155,8 +155,6 @@ def set_localisation():
     data = request.json
     if data['localisation'] == 'yes':
         controller_instance.clignoter_led(3)
-    else:
-        controller_instance.eteindre_led()
     return jsonify({"success": True}), 201
 
 @app.route('/videos/<int:id_video>', methods=['DELETE'])
