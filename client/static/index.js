@@ -66,11 +66,17 @@ document.addEventListener("DOMContentLoaded", function () {
     videosList.innerHTML = "";
     videos.forEach((video) => {
       const listItem = document.createElement("li");
-      listItem.textContent = `Video ID: ${video.id_video}, Nom: ${video.nom_video}`;
+
+      const textContent = document.createTextNode(
+        `Video ID: ${video.id_video}, Nom: ${video.nom_video}`
+      );
+      listItem.appendChild(textContent);
+
       const deleteButton = document.createElement("button");
-      deleteButton.textContent = "X";
+      deleteButton.textContent = "Supprimer";
       deleteButton.onclick = () => supprimerVideo(video.id_video);
-      listItem.textContent = `Video ID: ${video.id_video}, Nom: ${video.nom_video}`;
+      listItem.appendChild(deleteButton);
+
       videosList.appendChild(listItem);
     });
   }

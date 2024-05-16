@@ -242,5 +242,30 @@ def activer_localisation():
     
     return jsonify({"success": True}), 200
 
+@app.route("/supprimer-video", methods=['DELETE'])
+def supprimer_video():
+    id_video = request.json.get('id_video')
+    
+    conn_cloud = creer_connexion_cloud()
+    if not conn_cloud:
+        return jsonify({"success": False, "message": "Failed to connect to cloud database"}), 500
+    cursor = conn_cloud.cursor()
+    
+    try:
+        query = """
+        DELETE FROM videos_objets WHERE id_video = %s
+        """
+        cursor.execute(query, (id_video,))
+        conn_cloud.commit()
+        print(f"Rows affected - Supprimer video: {cursor.rowcount}")
+    except Exception as e:
+        print(f"Erreur lors de la suppression de la video: {e}")
+        conn_cloud.rollback()
+    finally:
+        cursor.close()
+        conn_cloud.close()
+    
+    return jsonify({"success": True}), 200
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
