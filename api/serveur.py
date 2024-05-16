@@ -6,8 +6,10 @@ app = Flask(__name__)
 controller_instance = None
 
 def set_controller_instance(instance):
+    print("Setting controller instance")
     global controller_instance
     controller_instance = instance
+    print("Controller instance set")
 
 # Liste toutes les vidéos dans la base de données
 @app.route('/videos', methods=['GET'])

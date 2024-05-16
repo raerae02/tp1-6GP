@@ -94,7 +94,7 @@ def get_objets_status():
     cloud_cursor = conn_cloud.cursor()
     cloud_cursor.execute("SELECT id_objet, nom_objet, local_objet, is_localisation FROM objets")
     objets = cloud_cursor.fetchall()
-
+    print ("Objets: ", objets)
     cloud_cursor.close()
     conn_cloud.close()
 

@@ -67,6 +67,10 @@ document.addEventListener("DOMContentLoaded", function () {
     videos.forEach((video) => {
       const listItem = document.createElement("li");
       listItem.textContent = `Video ID: ${video.id_video}, Nom: ${video.nom_video}`;
+      const deleteButton = document.createElement("button");
+      deleteButton.textContent = "X";
+      deleteButton.onclick = () => supprimerVideo(video.id_video);
+      listItem.textContent = `Video ID: ${video.id_video}, Nom: ${video.nom_video}`;
       videosList.appendChild(listItem);
     });
   }
@@ -118,7 +122,6 @@ document.addEventListener("DOMContentLoaded", function () {
               localisation ? "activated" : "deactivated"
             } successfully.`
           );
-          fetchObjectsStatus();
         } else {
           alert("Error: " + data.message);
         }
@@ -148,7 +151,7 @@ document.addEventListener("DOMContentLoaded", function () {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          alert("Vidéo uploadée avec succès.");
+          alert("Vidéo téléchargée avec succès.");
           fileInput.value = "";
         } else {
           alert("Erreur lors de l'upload de la vidéo.");
@@ -157,6 +160,24 @@ document.addEventListener("DOMContentLoaded", function () {
       .catch((error) => {
         console.error("Erreur lors de l'upload de la vidéo:", error);
         alert("Une erreur est survenue lors de l'upload de la vidéo.");
+      });
+  };
+  window.supprimerVideo = function (id_video) {
+    fetch(`http://4.206.210.212:5000/delete-video/${id_video}`, {
+      method: "DELETE",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          alert("Vidéo supprimée avec succès.");
+          fetchObjectsStatus();
+        } else {
+          alert("Erreur lors de la suppression de la vidéo.");
+        }
+      })
+      .catch((error) => {
+        console.error("Erreur lors de la suppression de la vidéo:", error);
+        alert("Une erreur est survenue lors de la suppression de la vidéo.");
       });
   };
 });
