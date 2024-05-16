@@ -158,3 +158,14 @@ def set_localisation():
     else:
         controleur_videos.eteindre_led()
     return jsonify({"success": True}), 201
+
+app.route('/videos/<int:id_video>', methods=['DELETE'])
+def supprimer_video(id_video):
+    connection = creer_connexion()
+    cursor = connection.cursor()
+    query = "DELETE FROM videos WHERE id_video = %s"
+    cursor.execute(query, (id_video,))
+    connection.commit()
+    cursor.close()
+    connection.close()
+    return jsonify({"success": True})

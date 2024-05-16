@@ -65,8 +65,11 @@ def save_data_locally(data):
     with open(BUFFER_FILE, 'w') as file:
         json.dump(buffered_data, file)
     
-# Methode qui synchronise les videos locales avec les videos du cloud, si une video est manquante ou si le checksum est different, elle sera telechargee
+# Methode qui synchronise les videos locales avec les videos du cloud.
+# Elle supprime les videos locales qui ne sont plus presentes dans le cloud
+# Si une video est manquante ou si le checksum est different, elle sera telechargee
 def synchronize_videos(videos):
+    fetch_and_delete_videos()
     for video in videos:
         video_path = os.path.join(VIDEO_DIR, video['nom_video'])
         if not os.path.exists(video_path): # or calculate_md5(video_path) != video['md5_video']:
@@ -152,3 +155,29 @@ def activer_localisation(id_objet, is_localisation):
     except requests.exceptions.RequestException as e:
         print(f"Erreur lors de l'activation de la localisation: {e}")
         
+def fetch_and_delete_videos():
+    response = requests.get(f"{SERVER_URL}/get-deleted-videos")
+    if response.status_code == 200:
+        data = response.json()
+        deleted_videos = data['deleted_videos']
+        for video in deleted_videos:
+            if video['id_objet'] == ID_OBJET:
+                delete_local_video(video['id_video'])
+                delete_videos_from_database(video['id_video'])
+                print(f"Deleted video {video['id_video']} locally.")
+
+def delete_local_video(id_video):
+    video_path = os.path.join(VIDEO_DIR, id_video)
+    if os.path.exists(video_path):
+        os.remove(video_path)
+        print(f"Deleted video {id_video} locally.")
+    else:
+        print(f"Video {id_video} not found locally.")
+        
+def delete_videos_from_database(id_video):
+    try:
+        response = requests.delete("http://localhost:5000/video/{id_video}")
+        response.raise_for_status()
+        print(f"Deleted video {id_video} from database.")
+    except requests.exceptions.RequestException as e:
+        print(f"Failed to delete video {id_video} from database: {e}")

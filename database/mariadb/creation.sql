@@ -25,3 +25,9 @@ CREATE TABLE videos_par_jour (
     FOREIGN KEY (id_video) REFERENCES videos_objets (id_video),
     FOREIGN KEY (id_objet) REFERENCES objets (id_objet)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE videos_supprimer (
+    id_video INT,
+    temps_suppression TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id_video)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
