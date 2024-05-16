@@ -1,12 +1,12 @@
 from api.database import creer_connexion_cloud, creer_connexion
 from datetime import datetime
+from datetime import datetime
 
-# Synchroniser les données de la base de données cloud avec les données de la base de données locale
 def synchroniser_donnees_cloud_avec_locale(data):
     try:
         print("synchroniser les données cloud avec locale")
         conn_cloud = creer_connexion_cloud()
-        if not conn_cloud :
+        if not conn_cloud:
             return False
         print("conn_cloud: ", conn_cloud)
 
@@ -25,13 +25,18 @@ def synchroniser_donnees_cloud_avec_locale(data):
                 INSERT INTO objets (id_objet, nom_objet, local_objet, is_localisation, objet_ip)
                 VALUES (%s, %s, %s, %s, %s)
             """, (id_objet, nom_objet, 'New York', False, objet_ip))
-            print("Objet ajouter dans la table objets", data)
+            print("Objet ajouté dans la table objets", data)
         else:
-            # Mettre a jour l'adresse IP de l'objet
+            # Mettre à jour l'adresse IP de l'objet
             cloud_cursor.execute("""
                 UPDATE objets SET objet_ip = %s WHERE id_objet = %s
             """, (objet_ip, id_objet))
-            
+
+        # Récupérer le maximum de l'ordre actuel pour l'objet
+        cloud_cursor.execute("SELECT MAX(ordre_video) FROM videos_objets WHERE id_objet = %s", (id_objet,))
+        max_ordre_result = cloud_cursor.fetchone()
+        ordre_video = max_ordre_result[0] if max_ordre_result[0] is not None else 0
+
         for video in data['videos']:
             id_video = video['video']
             nom_video = video['nom_video']
@@ -40,26 +45,29 @@ def synchroniser_donnees_cloud_avec_locale(data):
             nb_jouer = video['nb']
             temps_jouer = video['temps']
 
-            # Verifier si la video existe dans videos_objets
+            # Vérifier si la vidéo existe dans videos_objets
             cloud_cursor.execute("SELECT id_video FROM videos_objets WHERE id_video = %s", (id_video,))
             video_existe = cloud_cursor.fetchone()
 
             if not video_existe:
-                # Inserer la video si elle n'existe pas
+                # Incrémenter l'ordre
+                ordre_video += 1
+
+                # Insérer la vidéo si elle n'existe pas
                 cloud_cursor.execute("""
                     INSERT INTO videos_objets (id_video, id_objet, nom_video, taille_video, md5_video, ordre_video)
                     VALUES (%s, %s, %s, %s, %s, %s)
-                """, (id_video, id_objet, nom_video, 0, '', 0))
-                print("Video ajouter dans la table videos_objets", video)
+                """, (id_video, id_objet, nom_video, 0, '', ordre_video))
+                print("Vidéo ajoutée dans la table videos_objets", video)
 
-            # Inserer ou mettre a jour les statistiques de la video pour la journée
+            # Insérer ou mettre à jour les statistiques de la vidéo pour la journée
             query_cloud = """
             INSERT INTO videos_par_jour (date_jour, id_video, id_objet, nb_jouer, temps_jouer)
             VALUES (%s, %s, %s, %s, %s)
             ON DUPLICATE KEY UPDATE nb_jouer = nb_jouer + VALUES(nb_jouer), temps_jouer = temps_jouer + VALUES(temps_jouer)
             """
             cloud_cursor.execute(query_cloud, (date_jour, id_video, id_objet, nb_jouer, temps_jouer))
-            print("video ajouter dans la table videos_par_jour", video)
+            print("Vidéo ajoutée dans la table videos_par_jour", video)
 
         conn_cloud.commit()
         return True
