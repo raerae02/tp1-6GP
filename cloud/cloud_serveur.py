@@ -33,7 +33,7 @@ def fetch_object_details(id_objet):
         "objet": objet['id_objet'],
         "nom_objet": objet['nom_objet'],
         "local": objet['local_objet'],
-        "is_localisation": "yes" if objet['is_localisation'] else "no",
+        "is_localisation": "yes" if objet['is_localisation'] == 1 else "no",
         "objet_ip": objet['objet_ip']
     }
 
@@ -111,34 +111,6 @@ def servir_videos(video_name):
         return send_from_directory(VIDEO_DIR, video_name)
     else:
         return jsonify({"success": False, "message": "Video file not found"}), 404
-
-# Envoyer la commande à l'objet spécifié
-def envoyer_commande_objet(id_objet, command):
-    try:
-        conn_cloud = creer_connexion_cloud()
-        cursor = conn_cloud.cursor()
-        cursor.execute("SELECT objet_ip FROM objets WHERE id_objet = %s", (id_objet,))
-        result = cursor.fetchone()
-        cursor.close()
-        conn_cloud.close()
-        print("result: ", result)   
-        if result:
-            pi_url = f"http://{result[0]}:5000/execute_command"
-            print("pi_url: ", pi_url)
-            response = requests.post(pi_url, json={"command": command}, timeout=10)
-            response.raise_for_status()
-            print(f"Command '{command}' sent to Raspberry Pi {id_objet}: {response.json()}")
-            return response.json()
-    except requests.exceptions.RequestException as e:
-        print(f"Failed to send command '{command}' to Raspberry Pi {id_objet}: {e}")
-        return {"success": False}
-
-# Envoyer la commande à l'objet spécifié
-@app.route('/send_command/<int:id_objet>', methods=['POST'])
-def send_command(id_objet):
-    command = request.json.get('command')
-    response = envoyer_commande_objet(id_objet, command)
-    return jsonify(response), 200 if response.get("success") else 500
 
 @app.route('/get-stats', methods=['GET'])
 def get_stats():
@@ -239,6 +211,36 @@ def save_video_in_database(nom_video, id_objet, video_size):
     finally:
         cursor.close()
         conn_cloud.close()
+        
+@app.route("/activate-localisation", methods=['POST'])
+def activer_localisation():
+    print("Activer localisation")
+    id_objet = request.json.get('id_objet')
+    localisation = request.json.get('localisation')
+    
+    conn_cloud = creer_connexion_cloud()
+    if not conn_cloud:
+        return jsonify({"success": False, "message": "Failed to connect to cloud database"}), 500
+    cursor = conn_cloud.cursor()
+    
+    if localisation not in (0, 1):
+        print("Valeur de localisation invalide")
+        return jsonify({"success": False, "message": "Invalid localisation value"}), 400
+    try:
+        query = """
+        UPDATE objets SET is_localisation = %s WHERE id_objet = %s
+        """
+        cursor.execute(query, (localisation, id_objet))
+        conn_cloud.commit()
+        print(f"Rows affected - Activer localisation: {cursor.rowcount}")
+    except Exception as e:
+        print(f"Erreur lors de l'activation de la localisation: {e}")
+        conn_cloud.rollback()
+    finally:
+        cursor.close()
+        conn_cloud.close()
+    
+    return jsonify({"success": True}), 200
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

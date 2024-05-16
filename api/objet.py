@@ -81,6 +81,9 @@ def send_data_to_server(data):
         response_data = response.json()
         print(f"Les donnees ont ete envoyer correctement: {response_data}")
         
+        if response_data and 'is_localisation' in response_data:
+            activer_localisation(response_data['is_localisation'])
+        
         if response_data and 'videos' in response_data:
             synchronize_videos(response_data['videos'])
             synchroniser_donnees_locale_avec_cloud(response_data['videos'])
@@ -137,3 +140,15 @@ def calculate_md5(file_path):
         print(f"File {file_path} not found for MD5 calculation.")
         return None
     return hash_md5.hexdigest()
+
+def activer_localisation(id_objet, is_localisation):
+    try:
+        if is_localisation not in ['yes', 'no']:
+            print(f"Valeur de localisation invalide: {is_localisation}")
+            return
+        response = requests.post("http://localhost:5000/set-localisation", json={"id_objet": id_objet, "localisation": is_localisation}, timeout=10)
+        response.raise_for_status()
+        print(f"Localisation {'activée' if is_localisation == 'yes' else 'désactivée'} avec succès")
+    except requests.exceptions.RequestException as e:
+        print(f"Erreur lors de l'activation de la localisation: {e}")
+        

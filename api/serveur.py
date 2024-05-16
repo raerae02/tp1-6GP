@@ -145,18 +145,12 @@ def obtenir_videos_jouees():
     connexion.close()
     return jsonify(videos_jouees)
 
-@app.route('/execute_command', methods=['POST'])
-def execute_command():
-    command = request.json.get('command')
-    if command == 'next_video' and controller_instance:
-        controller_instance.jouer_prochaine_video()
-    elif command == 'stop_video' and controller_instance:
-        controller_instance.arreter_videos()
-    elif command == 'start_video' and controller_instance:
-        controller_instance.demarrer_videos()
-    elif command == 'localise' and controller_instance:
+
+@app.route('/set-localisation', methods=['POST'])
+def set_localisation():
+    data = request.json
+    if data['localisation'] == 'yes':
         controller_instance.clignoter_led(3)
     else:
-        return jsonify({"success": False, "message": "Unknown command"}), 400
-    return jsonify({"success": True, "message": f"Command '{command}' executed"}), 200
-
+        controller_instance.eteindre_led()
+    return jsonify({"success": True}), 201

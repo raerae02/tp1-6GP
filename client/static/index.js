@@ -85,9 +85,9 @@ document.addEventListener("DOMContentLoaded", function () {
         <td>${object.nb_jouer_total || 0}</td>
         <td>${object.temps_total || 0} seconds</td>
         <td>
-          <button onclick="sendCommand(${
-            object.id_objet
-          }, 'localise')">Activer Localization</button>
+        <button onclick="activerLocalisation(${object.id_objet}, ${
+        object.is_localisation ? 0 : 1
+      })">Toggle Localisation</button>
           <button onclick="fetchVideos(${object.id_objet})">Voir Videos</button>
           <input type="file" id="${fileInputId}" style="display: none;" accept="video/*" onchange="uploadVideo(${
         object.id_objet
@@ -99,60 +99,64 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  window.sendCommand = function (id_objet, command) {
-    fetch(`http://4.206.210.212:5000/send_command/${id_objet}`, {
+  window.activerLocalisation = function (id_objet, localisation) {
+    fetch(`http://4.206.210.212:5000/activate-localisation`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ command: command }),
+      body: JSON.stringify({
+        id_objet: id_objet,
+        localisation: localisation,
+      }),
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          console.log(
-            `Command '${command}' executed successfully for object ${id_objet}`
+          alert(
+            `Localisation ${
+              localisation ? "activated" : "deactivated"
+            } successfully.`
           );
+          fetchObjectsStatus();
         } else {
-          console.log(
-            `Failed to execute command '${command}' for object ${id_objet}`
-          );
+          alert("Error: " + data.message);
         }
       })
       .catch((error) => {
-        console.log("Error sending command:", error);
+        console.error("Error activating localisation:", error);
+        alert("An error occurred while activating localisation.");
+      });
+  };
+  window.uploadVideo = function (id_objet, inputId) {
+    const fileInput = document.getElementById(inputId);
+    const file = fileInput.files[0];
+
+    if (!file) {
+      alert("Veuillez sélectionner un fichier.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("video", file);
+    formData.append("id_objet", id_objet);
+
+    fetch("http://4.206.210.212:5000/upload_video", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          alert("Vidéo uploadée avec succès.");
+          fileInput.value = "";
+        } else {
+          alert("Erreur lors de l'upload de la vidéo.");
+        }
+      })
+      .catch((error) => {
+        console.error("Erreur lors de l'upload de la vidéo:", error);
+        alert("Une erreur est survenue lors de l'upload de la vidéo.");
       });
   };
 });
-
-window.uploadVideo = function (id_objet, inputId) {
-  const fileInput = document.getElementById(inputId);
-  const file = fileInput.files[0];
-
-  if (!file) {
-    alert("Veuillez sélectionner un fichier.");
-    return;
-  }
-
-  const formData = new FormData();
-  formData.append("video", file);
-  formData.append("id_objet", id_objet);
-
-  fetch("http://4.206.210.212:5000/upload_video", {
-    method: "POST",
-    body: formData,
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.success) {
-        alert("Vidéo uploadée avec succès.");
-        fileInput.value = "";
-      } else {
-        alert("Erreur lors de l'upload de la vidéo.");
-      }
-    })
-    .catch((error) => {
-      console.error("Erreur lors de l'upload de la vidéo:", error);
-      alert("Une erreur est survenue lors de l'upload de la vidéo.");
-    });
-};
