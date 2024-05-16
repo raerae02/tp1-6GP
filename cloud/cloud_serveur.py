@@ -266,7 +266,6 @@ def supprimer_video():
         
         nom_video = result[0]
         
-        
         query_supprimer_videos_par_jour = "DELETE FROM videos_par_jour WHERE id_video = %s"
         cursor.execute(query_supprimer_videos_par_jour, (id_video,))
         

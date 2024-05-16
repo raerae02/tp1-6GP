@@ -162,20 +162,21 @@ def  fetch_and_delete_videos():
         print("Fetched deleted videos.")
         data = response.json()
         deleted_videos = data['deleted_videos']
+        print(f"Deleted videos: {deleted_videos}")
         for video in deleted_videos:
-            if video['id_objet'] == ID_OBJET:
-                print(f"Deleting video {video['id_video']}...")
-                delete_local_video(video['id_video'])
-                delete_videos_from_database(video['id_video'])
-                print(f"Deleted video {video['id_video']} locally.")
+            # if video['id_objet'] == ID_OBJET:
+            print(f"Deleting video {video['id_video']}...")
+            delete_local_video(video['nom_video'])
+            delete_videos_from_database(video['id_video'])
+            print(f"Deleted video {video['id_video']} locally.")
 
-def delete_local_video(id_video):
-    video_path = os.path.join(VIDEO_DIR, id_video)
+def delete_local_video(nom_video):
+    video_path = os.path.join(VIDEO_DIR, nom_video)
     if os.path.exists(video_path):
         os.remove(video_path)
-        print(f"Deleted video {id_video} locally.")
+        print(f"Deleted video {nom_video} locally.")
     else:
-        print(f"Video {id_video} not found locally.")
+        print(f"Video {nom_video} not found locally.")
         
 def delete_videos_from_database(id_video):
     try:
